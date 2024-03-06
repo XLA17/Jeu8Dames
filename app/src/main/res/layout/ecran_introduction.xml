@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <!-- TextView pour le titre du jeu -->
+    <TextView
+        android:id="@+id/gameTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jeu 8 Dames"
+        android:textSize="36sp"
+        android:textColor="@color/title_color"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Button pour commencer à jouer -->
+    <Button
+        android:id="@+id/playButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jouer"
+        android:textSize="24sp"
+        android:onClick="start"/>
+
+</LinearLayout>

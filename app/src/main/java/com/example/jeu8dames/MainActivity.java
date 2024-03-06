@@ -1,4 +1,8 @@
-package com.example.jeu8dames;
+package com.example.jeu8dames; // Remplacez par le nom de votre package
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
