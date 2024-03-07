@@ -16,7 +16,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    List<int[]> possibilitesVictoire = new ArrayList<>();
+    List<int[]> victoryPossibilities = new ArrayList<>();
     int[] currentPossibility = {0, 0, 0, 0, 0, 0, 0, 0};
     TableLayout tl;
     int countQueen = 0;
@@ -32,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
         int[] p2 = {7,12,18,32,38,41,51,61};
         int[] p3 = {3,14,18,31,33,44,56,61};
         int[] p4 = {4,14,24,27,33,47,53,58};
-        possibilitesVictoire.add(p1);
-        possibilitesVictoire.add(p2);
-        possibilitesVictoire.add(p3);
-        possibilitesVictoire.add(p4);
+        victoryPossibilities.add(p1);
+        victoryPossibilities.add(p2);
+        victoryPossibilities.add(p3);
+        victoryPossibilities.add(p4);
 
         for (int i = 0; i < 8; i++) {
             TableRow row = new TableRow(this);
@@ -65,12 +65,15 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                         if (countQueen == 8){
-                            if (isArrayInListArray(possibilitesVictoire, currentPossibility)){
-                                Intent intent = new Intent(MainActivity.this, Victoire.class);
+                            boolean isVictory;
+                            if (isArrayInListArray(victoryPossibilities, currentPossibility)){
+                                Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
+                                intent.putExtra("isVictory", true);
                                 startActivity(intent);
                             }
                             else {
-                                Intent intent = new Intent(MainActivity.this, ActivityLoose.class);
+                                Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
+                                intent.putExtra("isVictory", false);
                                 startActivity(intent);
                             }
                         }

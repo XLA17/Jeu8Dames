@@ -26,11 +26,7 @@
             android:exported="true">
         </activity>
         <activity
-            android:name=".Victoire"
-            android:exported="true">
-        </activity>
-        <activity
-            android:name=".ActivityLoose"
+            android:name=".WinLooseActivity"
             android:exported="true">
         </activity>
     </application>
