@@ -26,6 +26,10 @@
             android:exported="true">
         </activity>
         <activity
+            android:name=".BackgroundChangerActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".WinLooseActivity"
             android:exported="true">
         </activity>

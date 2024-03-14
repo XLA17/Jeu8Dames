@@ -86,6 +86,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void openChangeBackgroundActivity(View view) {
+        Intent intent = new Intent(this, BackgroundChangerActivity.class);
+        startActivity(intent);
+    }
+
+
     private boolean isArrayInListArray(List<int[]> arrays, int[] array) {
         for (int i = 0; i < arrays.size(); i++){
             int[] array2 = arrays.get(i);
