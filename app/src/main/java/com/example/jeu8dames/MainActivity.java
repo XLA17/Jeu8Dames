@@ -54,6 +54,34 @@ public class MainActivity extends AppCompatActivity {
         victoryPossibilities.add(s11);
         victoryPossibilities.add(s12);
 
+        for (int i = 0; i < 12; i++){
+            int[] p = victoryPossibilities.get(i);
+            int[] p2 = new int[8];
+            int[] p3 = new int[8];
+            int[] p4 = new int[8];
+            int[] p5 = new int[8];
+            int[] p6 = new int[8];
+            int[] p7 = new int[8];
+            int[] p8 = new int[8];
+            for (int j = 0; j < 8; j++){
+                int k = p[j];
+                p2[k] = 7 - j; // rotation gauche
+                p3[7 - j] = 7 - k; // rotation gauche
+                p4[7 - k] = j; // rotation gauche
+                p5[j] = 7 - k; // translation horizontal
+                p6[7 - j] = k; // translation verticale
+                p7[k] = j; // translation diagonale 1
+                p8[7 - k] = 7 - j; // translation diagonale 2
+            }
+            victoryPossibilities.add(p2);
+            victoryPossibilities.add(p3);
+            victoryPossibilities.add(p4);
+            victoryPossibilities.add(p5);
+            victoryPossibilities.add(p6);
+            victoryPossibilities.add(p7);
+            victoryPossibilities.add(p8);
+        }
+
         for (int i = 0; i < 8; i++) {
             TableRow row = new TableRow(this);
             TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
