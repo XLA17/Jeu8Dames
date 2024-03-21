@@ -3,10 +3,13 @@ package com.example.jeu8dames;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import androidx.annotation.Nullable;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -88,7 +91,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void openChangeBackgroundActivity(View view) {
         Intent intent = new Intent(this, BackgroundChangerActivity.class);
-        startActivity(intent);
+        int requestCode = 1; // This can be any integer value
+        startActivityForResult(intent, requestCode);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            int backgroundResId = data.getIntExtra("backgroundResId", 0);
+            if (backgroundResId != 0) {
+                findViewById(R.id.relativeLayout).setBackgroundResource(backgroundResId);
+            }
+        }
     }
 
 
