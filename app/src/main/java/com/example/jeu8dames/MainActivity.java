@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     int countQueen = 0;
     TextView messageTextView;
     TextView textCountQueen;
-
+    boolean aideLignesAttaque;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         validerButton = findViewById(R.id.validerButton);
         messageTextView = findViewById(R.id.messageTextView);
         textCountQueen = findViewById(R.id.textCountQueen);
+        aideLignesAttaque = true;
 
         int[] s1 = {1,3,5,7,2,0,6,4};
         int[] s2 = {0,6,3,5,7,1,4,2};
@@ -106,11 +107,15 @@ public class MainActivity extends AppCompatActivity {
 
             for (int j = 0; j < 8; j++) {
                 ImageView imageView = new ImageView(this);
-                int colorRes = (i % 2 == 0) ? ((j % 2 == 0) ? R.color.beige : R.color.brown)
-                        : ((j % 2 == 0) ? R.color.brown : R.color.beige);
-                imageView.setBackgroundColor(getResources().getColor(colorRes));
+                if ((i+j) % 2 == 0){
+                    imageView.setBackgroundColor(getResources().getColor(R.color.beige));
+                }
+                else {
+                    imageView.setBackgroundColor(getResources().getColor(R.color.brown));
+                }
                 imageView.setLayoutParams(new TableRow.LayoutParams(100, 100));
                 imageView.setPadding(5,5,5,5);
+                imageView.setTag(0);
                 int colonne = j;
                 int ligne = i;
                 imageView.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +126,9 @@ public class MainActivity extends AppCompatActivity {
                                 currentPossibility[colonne] = ligne;
                                 countQueen++;
                                 updateQueenCount();
+                                if (aideLignesAttaque){
+                                    affichageLignesAttaque(ligne, colonne);
+                                }
                                 imageView.setImageResource(R.drawable.queen);
                             }
                         }
@@ -128,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
                             currentPossibility[colonne] = 0;
                             countQueen--;
                             updateQueenCount();
+                            if (aideLignesAttaque){
+                                suppressionLignesAttaque(ligne, colonne);
+                            }
                             imageView.setImageDrawable(null);
                         }
                     }
@@ -162,6 +173,196 @@ public class MainActivity extends AppCompatActivity {
     // Méthode pour mettre à jour le nombre de reines placées
     private void updateQueenCount() {
         textCountQueen.setText(8 - countQueen + "/8");
+    }
+
+    private void affichageLignesAttaque(int ligne, int colonne){
+        TableRow row = (TableRow) tl.getChildAt(ligne);
+        for (int i = 0; i < 8; i++){
+            TableRow eachRow = (TableRow) tl.getChildAt(i);
+            ImageView imageView = (ImageView) row.getChildAt(i);
+            int tag = (int) imageView.getTag();
+            imageView.setTag(tag + 1);
+            if ((ligne+i) % 2 == 0){
+                imageView.setBackgroundColor(getColor(R.color.white));
+            }
+            else {
+                imageView.setBackgroundColor(getColor(R.color.black));
+            }
+            if (i != ligne) {
+                imageView = (ImageView) eachRow.getChildAt(colonne);
+                tag = (int) imageView.getTag();
+                imageView.setTag(tag + 1);
+                if ((colonne + i) % 2 == 0) {
+                    imageView.setBackgroundColor(getColor(R.color.white));
+                } else {
+                    imageView.setBackgroundColor(getColor(R.color.black));
+                }
+            }
+        }
+        int lignetmp = ligne;
+        int colonnetmp = colonne;
+        while (lignetmp != 0 && colonnetmp != 0){
+            lignetmp--;
+            colonnetmp--;
+            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
+            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
+            int tag = (int) imageView.getTag();
+            imageView.setTag(tag + 1);
+            if ((ligne+colonne) % 2 == 0){
+                imageView.setBackgroundColor(getColor(R.color.white));
+            }
+            else {
+                imageView.setBackgroundColor(getColor(R.color.black));
+            }
+        }
+        lignetmp = ligne;
+        colonnetmp = colonne;
+        while (lignetmp != 0 && colonnetmp != 7) {
+            lignetmp--;
+            colonnetmp++;
+            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
+            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
+            int tag = (int) imageView.getTag();
+            imageView.setTag(tag + 1);
+            if ((ligne + colonne) % 2 == 0) {
+                imageView.setBackgroundColor(getColor(R.color.white));
+            } else {
+                imageView.setBackgroundColor(getColor(R.color.black));
+            }
+        }
+        lignetmp = ligne;
+        colonnetmp = colonne;
+        while (lignetmp != 7 && colonnetmp != 0) {
+            lignetmp++;
+            colonnetmp--;
+            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
+            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
+            int tag = (int) imageView.getTag();
+            imageView.setTag(tag + 1);
+            if ((ligne + colonne) % 2 == 0) {
+                imageView.setBackgroundColor(getColor(R.color.white));
+            } else {
+                imageView.setBackgroundColor(getColor(R.color.black));
+            }
+        }
+        lignetmp = ligne;
+        colonnetmp = colonne;
+        while (lignetmp != 7 && colonnetmp != 7) {
+            lignetmp++;
+            colonnetmp++;
+            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
+            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
+            int tag = (int) imageView.getTag();
+            imageView.setTag(tag + 1);
+            if ((ligne + colonne) % 2 == 0) {
+                imageView.setBackgroundColor(getColor(R.color.white));
+            } else {
+                imageView.setBackgroundColor(getColor(R.color.black));
+            }
+        }
+    }
+
+    private void suppressionLignesAttaque(int ligne, int colonne){
+        TableRow row = (TableRow) tl.getChildAt(ligne);
+        for (int i = 0; i < 8; i++) {
+            TableRow eachRow = (TableRow) tl.getChildAt(i);
+            ImageView imageView = (ImageView) row.getChildAt(i);
+            int tag = (int) imageView.getTag();
+            tag--;
+            imageView.setTag(tag);
+            if (tag == 0) {
+                if ((ligne + i) % 2 == 0) {
+                    imageView.setBackgroundColor(getColor(R.color.beige));
+                } else {
+                    imageView.setBackgroundColor(getColor(R.color.brown));
+                }
+            }
+            if (i != ligne) {
+                imageView = (ImageView) eachRow.getChildAt(colonne);
+                tag = (int) imageView.getTag();
+                tag--;
+                imageView.setTag(tag);
+                if (tag == 0) {
+                    if ((colonne + i) % 2 == 0) {
+                        imageView.setBackgroundColor(getColor(R.color.beige));
+                    } else {
+                        imageView.setBackgroundColor(getColor(R.color.brown));
+                    }
+                }
+            }
+        }
+        int lignetmp = ligne;
+        int colonnetmp = colonne;
+        while (lignetmp != 0 && colonnetmp != 0){
+            lignetmp--;
+            colonnetmp--;
+            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
+            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
+            int tag = (int) imageView.getTag();
+            tag--;
+            imageView.setTag(tag);
+            if (tag == 0) {
+                if ((ligne + colonne) % 2 == 0) {
+                    imageView.setBackgroundColor(getColor(R.color.beige));
+                } else {
+                    imageView.setBackgroundColor(getColor(R.color.brown));
+                }
+            }
+        }
+        lignetmp = ligne;
+        colonnetmp = colonne;
+        while (lignetmp != 0 && colonnetmp != 7) {
+            lignetmp--;
+            colonnetmp++;
+            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
+            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
+            int tag = (int) imageView.getTag();
+            tag--;
+            imageView.setTag(tag);
+            if (tag == 0) {
+                if ((ligne + colonne) % 2 == 0) {
+                    imageView.setBackgroundColor(getColor(R.color.beige));
+                } else {
+                    imageView.setBackgroundColor(getColor(R.color.brown));
+                }
+            }
+        }
+        lignetmp = ligne;
+        colonnetmp = colonne;
+        while (lignetmp != 7 && colonnetmp != 0) {
+            lignetmp++;
+            colonnetmp--;
+            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
+            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
+            int tag = (int) imageView.getTag();
+            tag--;
+            imageView.setTag(tag);
+            if (tag == 0) {
+                if ((ligne + colonne) % 2 == 0) {
+                    imageView.setBackgroundColor(getColor(R.color.beige));
+                } else {
+                    imageView.setBackgroundColor(getColor(R.color.brown));
+                }
+            }
+        }
+        lignetmp = ligne;
+        colonnetmp = colonne;
+        while (lignetmp != 7 && colonnetmp != 7) {
+            lignetmp++;
+            colonnetmp++;
+            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
+            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
+            int tag = (int) imageView.getTag();
+            tag--;
+            imageView.setTag(tag);
+            if (tag == 0) {
+                if ((ligne + colonne) % 2 == 0) {
+                    imageView.setBackgroundColor(getColor(R.color.beige));
+                } else {
+                    imageView.setBackgroundColor(getColor(R.color.brown));
+                }
+            }
+        }
     }
 
     public void validerGrille(){
