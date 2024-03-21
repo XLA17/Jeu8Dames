@@ -1,12 +1,17 @@
 package com.example.jeu8dames;
 
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,7 +24,10 @@ public class MainActivity extends AppCompatActivity {
     List<int[]> victoryPossibilities = new ArrayList<>();
     int[] currentPossibility = {-1,-1,-1,-1,-1,-1,-1,-1};
     TableLayout tl;
+    Button validerButton;
     int countQueen = 0;
+    TextView messageTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         tl = findViewById(R.id.tableLayout);
+        validerButton = findViewById(R.id.validerButton);
+        messageTextView = findViewById(R.id.messageTextView);
 
         int[] s1 = {1,3,5,7,2,0,6,4};
         int[] s2 = {0,6,3,5,7,1,4,2};
@@ -65,21 +75,23 @@ public class MainActivity extends AppCompatActivity {
             int[] p8 = new int[8];
             for (int j = 0; j < 8; j++){
                 int k = p[j];
-                p2[k] = 7 - j; // rotation gauche
-                p3[7 - j] = 7 - k; // rotation gauche
-                p4[7 - k] = j; // rotation gauche
+                p2[k] = 7 - j; // rotation gauche 90°
+                p3[7 - j] = 7 - k; // rotation 180°
+                p4[7 - k] = j; // rotation droite 90°
                 p5[j] = 7 - k; // translation horizontal
                 p6[7 - j] = k; // translation verticale
                 p7[k] = j; // translation diagonale 1
                 p8[7 - k] = 7 - j; // translation diagonale 2
             }
+            if (i != 11){
+                victoryPossibilities.add(p3);
+                victoryPossibilities.add(p4);
+                victoryPossibilities.add(p6);
+                victoryPossibilities.add(p8);
+            }
             victoryPossibilities.add(p2);
-            victoryPossibilities.add(p3);
-            victoryPossibilities.add(p4);
             victoryPossibilities.add(p5);
-            victoryPossibilities.add(p6);
             victoryPossibilities.add(p7);
-            victoryPossibilities.add(p8);
         }
 
         for (int i = 0; i < 8; i++) {
@@ -110,18 +122,6 @@ public class MainActivity extends AppCompatActivity {
                                 imageView.setImageDrawable(null);
                             }
                         }
-                        if (countQueen == 8){
-                            if (isArrayInListArray(victoryPossibilities, currentPossibility)){
-                                Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
-                                intent.putExtra("isVictory", true);
-                                startActivity(intent);
-                            }
-                            else {
-                                Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
-                                intent.putExtra("isVictory", false);
-                                startActivity(intent);
-                            }
-                        }
                     }
                 });
                 row.addView(imageView);
@@ -129,20 +129,43 @@ public class MainActivity extends AppCompatActivity {
 
             tl.addView(row);
         }
+
+        validerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                validerGrille();
+            }
+        });
     }
 
     private boolean isArrayInListArray(List<int[]> arrays, int[] array) {
         for (int i = 0; i < arrays.size(); i++){
             int[] array2 = arrays.get(i);
-            if (array == null || array2 == null || array2.length != array.length) {
+            if (array == null | array2 == null || array2.length != array.length) {
                 return false;
             }
-            Arrays.sort(array);
-            Arrays.sort(array2);
             if (Arrays.equals(array, array2)){
                 return true;
             }
         }
         return false;
+    }
+
+    public void validerGrille(){
+        if (countQueen == 8){
+            if (isArrayInListArray(victoryPossibilities, currentPossibility)){
+                Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
+                intent.putExtra("isVictory", true);
+                startActivity(intent);
+            }
+            else {
+                Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
+                intent.putExtra("isVictory", false);
+                startActivity(intent);
+            }
+        }
+        else {
+            messageTextView.setVisibility(View.VISIBLE);
+        }
     }
 }
