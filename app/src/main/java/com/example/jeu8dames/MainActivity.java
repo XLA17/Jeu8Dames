@@ -4,11 +4,14 @@ package com.example.jeu8dames;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -27,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     Button validerButton;
     int countQueen = 0;
     TextView messageTextView;
+    TextView textCountQueen;
 
 
     @Override
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         tl = findViewById(R.id.tableLayout);
         validerButton = findViewById(R.id.validerButton);
         messageTextView = findViewById(R.id.messageTextView);
+        textCountQueen = findViewById(R.id.textCountQueen);
 
         int[] s1 = {1,3,5,7,2,0,6,4};
         int[] s2 = {0,6,3,5,7,1,4,2};
@@ -105,22 +110,25 @@ public class MainActivity extends AppCompatActivity {
                         : ((j % 2 == 0) ? R.color.brown : R.color.beige);
                 imageView.setBackgroundColor(getResources().getColor(colorRes));
                 imageView.setLayoutParams(new TableRow.LayoutParams(100, 100));
+                imageView.setPadding(5,5,5,5);
                 int colonne = j;
                 int ligne = i;
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (countQueen < 8) {
-                            if (imageView.getDrawable() == null) {
+                        if (imageView.getDrawable() == null) {
+                            if (countQueen < 8) {
                                 currentPossibility[colonne] = ligne;
                                 countQueen++;
+                                updateQueenCount();
                                 imageView.setImageResource(R.drawable.queen);
                             }
-                            else {
-                                currentPossibility[colonne] = 0;
-                                countQueen--;
-                                imageView.setImageDrawable(null);
-                            }
+                        }
+                        else {
+                            currentPossibility[colonne] = 0;
+                            countQueen--;
+                            updateQueenCount();
+                            imageView.setImageDrawable(null);
                         }
                     }
                 });
@@ -149,6 +157,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    // Méthode pour mettre à jour le nombre de reines placées
+    private void updateQueenCount() {
+        textCountQueen.setText(8 - countQueen + "/8");
     }
 
     public void validerGrille(){
