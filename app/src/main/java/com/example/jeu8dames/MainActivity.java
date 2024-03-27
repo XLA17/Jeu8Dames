@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,17 +15,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.media.MediaPlayer;
+
 public class MainActivity extends AppCompatActivity {
 
     List<int[]> victoryPossibilities = new ArrayList<>();
-    int[] currentPossibility = {-1,-1,-1,-1,-1,-1,-1,-1};
+    int[] currentPossibility = {-1, -1, -1, -1, -1, -1, -1, -1};
     TableLayout tl;
     int countQueen = 0;
+    MediaPlayer mediaPlayer;
+    Button toggleSoundButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initialize media player and start playing audio
+        mediaPlayer = MediaPlayer.create(this, R.raw.lofi); // Change "your_audio_file" to the name of your audio file in res/raw
+        mediaPlayer.setLooping(true); // Loop the audio
+        mediaPlayer.start();
+
+        // Initialize toggle sound button
+        toggleSoundButton = findViewById(R.id.toggle_sound_button);
+
 
         tl = findViewById(R.id.tableLayout);
 
@@ -116,5 +130,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    public void toggleSound(View view) {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        } else {
+            mediaPlayer.start();
+        }
+    }
+
+
+
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mediaPlayer.pause();
     }
 }
