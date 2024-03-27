@@ -33,5 +33,10 @@
             android:name=".WinLooseActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".CosmeticMenu"
+            android:exported="true">
+
+        </activity>
     </application>
 </manifest>

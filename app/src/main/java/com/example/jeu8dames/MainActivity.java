@@ -95,6 +95,12 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, requestCode);
     }
 
+    public void openCosmeticMenu(View view) {
+            Intent intent = new Intent(this, CosmeticMenu.class);
+            int requestCode = 1; // This can be any integer value
+            startActivityForResult(intent, requestCode);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
