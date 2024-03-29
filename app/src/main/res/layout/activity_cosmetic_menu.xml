@@ -5,7 +5,7 @@
     android:padding="16dp">
 
     <Button
-        android:id="@+id/button_change_background"
+        android:id="@+id/backToGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Retour"
@@ -23,49 +23,38 @@
         android:layout_centerVertical="true"
         android:padding="3dp">
 
-        <!-- First row of ImageViews -->
-        <TableRow>
-            <ImageView
-                android:id="@+id/imageView1"
-                android:layout_width="150dp"
-                android:layout_height="266dp"
-                android:background="@drawable/fond_principal"
-                android:layout_margin="5dp"
-                android:clickable="true"
-                android:onClick="changeBackground"
-                android:tag="imageView1"/>
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="150dp"
-                android:layout_height="266dp"
-                android:background="@drawable/fond2"
-                android:layout_margin="5dp"
-                android:clickable="true"
-                android:onClick="changeBackground"
-                android:tag="imageView2"/>
-        </TableRow>
+        <Button
+            android:id="@+id/changeBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Changer le fond"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:onClick="changeBackground"/>
 
-        <!-- Second row of ImageViews -->
-        <TableRow>
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="150dp"
-                android:layout_height="266dp"
-                android:background="@drawable/fond3"
-                android:layout_margin="5dp"
-                android:clickable="true"
-                android:onClick="changeBackground"
-                android:tag="imageView3"/>
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="150dp"
-                android:layout_height="266dp"
-                android:background="@drawable/fond4"
-                android:layout_margin="5dp"
-                android:clickable="true"
-                android:onClick="changeBackground"
-                android:tag="imageView4"/>
-        </TableRow>
+        <Button
+            android:id="@+id/changeBoard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Changer le plateau"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:onClick="changeBoard"/>
+
+        <Button
+            android:id="@+id/changePieces"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Changer les pièces"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:onClick="changePieces"/>
     </TableLayout>
 
 </RelativeLayout>

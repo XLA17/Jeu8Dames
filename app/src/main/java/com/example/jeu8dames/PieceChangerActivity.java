@@ -6,42 +6,39 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-public class BackgroundChangerActivity extends Activity {
+public class PieceChangerActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_change_background);
+        setContentView(R.layout.activity_change_pieces);
     }
 
     public void backToGame(View view) {
         finish();
     }
 
-    public void changeBackground(View view) {
-        int backgroundResId = 0;
+    public void changePieces(View view) {
+        int piecesID = 0;
         String tag = view.getTag().toString();
-        Log.d("BackgroundChangerActivity", "Tag: " + tag);
         switch (tag) {
             case "imageView1":
-                backgroundResId = R.drawable.fond_principal;
+                piecesID = R.drawable.queen;
                 break;
             case "imageView2":
-                backgroundResId = R.drawable.fond2;
+                piecesID = R.drawable.black_queen;
                 break;
             case "imageView3":
-                backgroundResId = R.drawable.fond3;
+                piecesID = R.drawable.queen2;
                 break;
             case "imageView4":
-                backgroundResId = R.drawable.fond4;
+                piecesID = R.drawable.queen3;
                 break;
             default:
                 break;
         }
 
-        Log.d("BackgroundChangerActivity", "Selected backgroundResId: " + backgroundResId);
-
         Intent intent = new Intent();
-        intent.putExtra("backgroundResId", backgroundResId);
+        intent.putExtra("piecesID", piecesID);
         setResult(RESULT_OK, intent);
         finish();
     }

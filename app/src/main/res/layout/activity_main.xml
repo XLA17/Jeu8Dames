@@ -8,25 +8,14 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/button_change_background"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Changer le fond"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="15dp"
-        android:onClick="openChangeBackgroundActivity"/>
-
-    <Button
         android:id="@+id/cosmeticMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cosmétiques"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/palette"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="70dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginEnd="20dp"
         android:onClick="openCosmeticMenu"/>
 
 
