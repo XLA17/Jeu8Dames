@@ -18,12 +18,11 @@
         android:layout_marginBottom="32dp" />
 
     <!-- Button pour commencer à jouer -->
-    <Button
+    <ImageView
         android:id="@+id/playButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Jouer"
-        android:textSize="24sp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/jouer"
         android:onClick="start"/>
 
 </LinearLayout>

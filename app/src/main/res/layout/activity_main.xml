@@ -6,12 +6,12 @@
     android:orientation="vertical"
     android:gravity="center_horizontal">
 
-    <Button
-        android:id="@+id/toggle_sound_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Musique"
-        android:onClick="toggleSound" />
+    <ImageView
+        android:id="@+id/sonButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/son"
+        android:onClick="toggleSound"/>
 
 
 

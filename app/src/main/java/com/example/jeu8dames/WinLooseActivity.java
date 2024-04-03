@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ImageView;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,7 +19,7 @@ public class WinLooseActivity extends AppCompatActivity {
         setContentView(R.layout.win_loose_layout);
 
         TextView textView = findViewById(R.id.message);
-        Button restartButton = findViewById(R.id.restartButton);
+        ImageView retryButton = findViewById(R.id.RetryButton);
 
         Intent intent = getIntent();
 
@@ -32,7 +34,7 @@ public class WinLooseActivity extends AppCompatActivity {
             }
         }
 
-        restartButton.setOnClickListener(new View.OnClickListener() {
+        retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 recommencer();
@@ -43,4 +45,11 @@ public class WinLooseActivity extends AppCompatActivity {
     public void recommencer(){
         startActivity(new Intent(this, MenuActivity.class));
     }
+    public void quitter(View view) {
+        finishAffinity(); // Ferme toutes les activités de l'application
+    }
+
+
 }
+
+

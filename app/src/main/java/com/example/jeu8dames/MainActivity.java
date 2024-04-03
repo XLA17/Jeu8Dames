@@ -1,6 +1,5 @@
 package com.example.jeu8dames;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     TableLayout tl;
     int countQueen = 0;
     MediaPlayer mediaPlayer;
-    Button toggleSoundButton;
+    ImageView toggleSoundButton; // Changement du type de bouton à ImageView
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +36,7 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer.start();
 
         // Initialize toggle sound button
-        toggleSoundButton = findViewById(R.id.toggle_sound_button);
-
+        toggleSoundButton = findViewById(R.id.sonButton); // Récupérer le ImageView associé à l'ID sonButton
 
         tl = findViewById(R.id.tableLayout);
 
@@ -139,10 +137,6 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer.start();
         }
     }
-
-
-
-
 
     @Override
     protected void onPause() {
