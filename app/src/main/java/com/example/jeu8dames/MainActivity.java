@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -27,10 +29,11 @@ public class MainActivity extends AppCompatActivity {
     List<int[]> victoryPossibilities = new ArrayList<>();
     int[] currentPossibility = {-1,-1,-1,-1,-1,-1,-1,-1};
     TableLayout tl;
-    Button validerButton;
+    ImageView validerButton;
     int countQueen = 0;
     TextView messageTextView;
     TextView textCountQueen;
+    ImageView imageViewAideLignesAttaque;
     boolean aideLignesAttaque;
 
     @Override
@@ -42,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
         validerButton = findViewById(R.id.validerButton);
         messageTextView = findViewById(R.id.messageTextView);
         textCountQueen = findViewById(R.id.textCountQueen);
-        aideLignesAttaque = true;
+        imageViewAideLignesAttaque = findViewById(R.id.aideLignesAttaque);
+        aideLignesAttaque = false;
 
         int[] s1 = {1,3,5,7,2,0,6,4};
         int[] s2 = {0,6,3,5,7,1,4,2};
@@ -100,6 +104,10 @@ public class MainActivity extends AppCompatActivity {
             victoryPossibilities.add(p7);
         }
 
+        float scale = getResources().getDisplayMetrics().density;
+        int sizeSquare = (int) (40 * scale + 0.5f);
+        int marginSquare = (int) (2 * scale + 0.5f);
+
         for (int i = 0; i < 8; i++) {
             TableRow row = new TableRow(this);
             TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
@@ -113,8 +121,8 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     imageView.setBackgroundColor(getResources().getColor(R.color.brown));
                 }
-                imageView.setLayoutParams(new TableRow.LayoutParams(100, 100));
-                imageView.setPadding(5,5,5,5);
+                imageView.setLayoutParams(new TableRow.LayoutParams(sizeSquare, sizeSquare));
+                imageView.setPadding(marginSquare,marginSquare,marginSquare,marginSquare);
                 imageView.setTag(0);
                 int colonne = j;
                 int ligne = i;
@@ -127,13 +135,13 @@ public class MainActivity extends AppCompatActivity {
                                 countQueen++;
                                 updateQueenCount();
                                 if (aideLignesAttaque){
-                                    affichageLignesAttaque(ligne, colonne);
+                                    affichageLignesAttaque(ligne, colonne, R.color.white, R.color.black);
                                 }
                                 imageView.setImageResource(R.drawable.queen);
                             }
                         }
                         else {
-                            currentPossibility[colonne] = 0;
+                            currentPossibility[colonne] = -1;
                             countQueen--;
                             updateQueenCount();
                             if (aideLignesAttaque){
@@ -148,6 +156,30 @@ public class MainActivity extends AppCompatActivity {
 
             tl.addView(row);
         }
+
+        imageViewAideLignesAttaque.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (aideLignesAttaque){
+                    for (int i = 0; i < 8; i++){
+                        int ligne = currentPossibility[i];
+                        if (ligne != -1){
+                            suppressionLignesAttaque(ligne, i);
+                        }
+                    }
+                    aideLignesAttaque = false;
+                }
+                else {
+                    for (int i = 0; i < 8; i++){
+                        int ligne = currentPossibility[i];
+                        if (ligne != -1){
+                            affichageLignesAttaque(ligne, i, R.color.white, R.color.black);
+                        }
+                    }
+                    aideLignesAttaque = true;
+                }
+            }
+        });
 
         validerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         textCountQueen.setText(8 - countQueen + "/8");
     }
 
-    private void affichageLignesAttaque(int ligne, int colonne){
+    private void affichageLignesAttaque(int ligne, int colonne, int couleurClair, int couleurFonce){
         TableRow row = (TableRow) tl.getChildAt(ligne);
         for (int i = 0; i < 8; i++){
             TableRow eachRow = (TableRow) tl.getChildAt(i);
@@ -183,19 +215,19 @@ public class MainActivity extends AppCompatActivity {
             int tag = (int) imageView.getTag();
             imageView.setTag(tag + 1);
             if ((ligne+i) % 2 == 0){
-                imageView.setBackgroundColor(getColor(R.color.white));
+                imageView.setBackgroundColor(getColor(couleurClair));
             }
             else {
-                imageView.setBackgroundColor(getColor(R.color.black));
+                imageView.setBackgroundColor(getColor(couleurFonce));
             }
             if (i != ligne) {
                 imageView = (ImageView) eachRow.getChildAt(colonne);
                 tag = (int) imageView.getTag();
                 imageView.setTag(tag + 1);
                 if ((colonne + i) % 2 == 0) {
-                    imageView.setBackgroundColor(getColor(R.color.white));
+                    imageView.setBackgroundColor(getColor(couleurClair));
                 } else {
-                    imageView.setBackgroundColor(getColor(R.color.black));
+                    imageView.setBackgroundColor(getColor(couleurFonce));
                 }
             }
         }
@@ -209,10 +241,10 @@ public class MainActivity extends AppCompatActivity {
             int tag = (int) imageView.getTag();
             imageView.setTag(tag + 1);
             if ((ligne+colonne) % 2 == 0){
-                imageView.setBackgroundColor(getColor(R.color.white));
+                imageView.setBackgroundColor(getColor(couleurClair));
             }
             else {
-                imageView.setBackgroundColor(getColor(R.color.black));
+                imageView.setBackgroundColor(getColor(couleurFonce));
             }
         }
         lignetmp = ligne;
@@ -225,9 +257,9 @@ public class MainActivity extends AppCompatActivity {
             int tag = (int) imageView.getTag();
             imageView.setTag(tag + 1);
             if ((ligne + colonne) % 2 == 0) {
-                imageView.setBackgroundColor(getColor(R.color.white));
+                imageView.setBackgroundColor(getColor(couleurClair));
             } else {
-                imageView.setBackgroundColor(getColor(R.color.black));
+                imageView.setBackgroundColor(getColor(couleurFonce));
             }
         }
         lignetmp = ligne;
@@ -240,9 +272,9 @@ public class MainActivity extends AppCompatActivity {
             int tag = (int) imageView.getTag();
             imageView.setTag(tag + 1);
             if ((ligne + colonne) % 2 == 0) {
-                imageView.setBackgroundColor(getColor(R.color.white));
+                imageView.setBackgroundColor(getColor(couleurClair));
             } else {
-                imageView.setBackgroundColor(getColor(R.color.black));
+                imageView.setBackgroundColor(getColor(couleurFonce));
             }
         }
         lignetmp = ligne;
@@ -255,9 +287,9 @@ public class MainActivity extends AppCompatActivity {
             int tag = (int) imageView.getTag();
             imageView.setTag(tag + 1);
             if ((ligne + colonne) % 2 == 0) {
-                imageView.setBackgroundColor(getColor(R.color.white));
+                imageView.setBackgroundColor(getColor(couleurClair));
             } else {
-                imageView.setBackgroundColor(getColor(R.color.black));
+                imageView.setBackgroundColor(getColor(couleurFonce));
             }
         }
     }
@@ -379,7 +411,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else {
-            messageTextView.setVisibility(View.VISIBLE);
+            messageTextView.setText("Veuillez placer toutes les dames.");
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    messageTextView.setText(""); // Supprimer le texte
+                }
+            }, 2000);
         }
     }
 }
