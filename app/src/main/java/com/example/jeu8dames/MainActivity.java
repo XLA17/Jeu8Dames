@@ -1,19 +1,11 @@
 package com.example.jeu8dames;
 
-
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -26,23 +18,30 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    List<int[]> victoryPossibilities = new ArrayList<>();
-    int[] currentPossibility = {-1,-1,-1,-1,-1,-1,-1,-1};
-    TableLayout tl;
-    ImageView validerButton;
-    int countQueen = 0;
-    TextView messageTextView;
-    TextView textCountQueen;
-    ImageView imageViewAideLignesAttaque;
-    boolean aideLignesAttaque;
+    private int backgroundChessSquareLight;
+    private int backgroundChessSquareDark;
+    private List<int[]> victoryPossibilities;
+    private List<Integer> currentPossibility;
+    private TableLayout tl;
+    private ImageView validerButton;
+    private int countQueen;
+    private TextView messageTextView;
+    private TextView textCountQueen;
+    private ImageView imageViewAideLignesAttaque;
+    private boolean aideLignesAttaque;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        backgroundChessSquareLight = getColor(R.color.beige);
+        backgroundChessSquareDark = getColor(R.color.brown);
+        victoryPossibilities = new ArrayList<>();
+        currentPossibility = new ArrayList<>();
         tl = findViewById(R.id.tableLayout);
         validerButton = findViewById(R.id.validerButton);
+        countQueen = 0;
         messageTextView = findViewById(R.id.messageTextView);
         textCountQueen = findViewById(R.id.textCountQueen);
         imageViewAideLignesAttaque = findViewById(R.id.aideLignesAttaque);
@@ -116,38 +115,52 @@ public class MainActivity extends AppCompatActivity {
             for (int j = 0; j < 8; j++) {
                 ImageView imageView = new ImageView(this);
                 if ((i+j) % 2 == 0){
-                    imageView.setBackgroundColor(getResources().getColor(R.color.beige));
+                    imageView.setBackgroundColor(backgroundChessSquareLight);
                 }
                 else {
-                    imageView.setBackgroundColor(getResources().getColor(R.color.brown));
+                    imageView.setBackgroundColor(backgroundChessSquareDark);
                 }
                 imageView.setLayoutParams(new TableRow.LayoutParams(sizeSquare, sizeSquare));
                 imageView.setPadding(marginSquare,marginSquare,marginSquare,marginSquare);
                 imageView.setTag(0);
                 int colonne = j;
                 int ligne = i;
+                int position = (colonne+1) * 10 + ligne+1;
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (imageView.getDrawable() == null) {
                             if (countQueen < 8) {
-                                currentPossibility[colonne] = ligne;
+                                currentPossibility.add(position);
+                                int tag = (int) imageView.getTag();
+                                tag += 10;
+                                imageView.setTag(tag);
                                 countQueen++;
                                 updateQueenCount();
-                                if (aideLignesAttaque){
-                                    affichageLignesAttaque(ligne, colonne, R.color.white, R.color.black);
+                                if (afficherDamesAttaquees(ligne, colonne)){
+                                    if ((int) imageView.getTag() >= 11) {
+                                        imageView.setBackgroundResource(R.drawable.background_light_with_border);
+                                    }
                                 }
                                 imageView.setImageResource(R.drawable.queen);
+                                Log.i("TAG", "Valeur de tag (ajout dame): " + (int) imageView.getTag());
                             }
                         }
                         else {
-                            currentPossibility[colonne] = -1;
+                            currentPossibility.remove((Object) position);
                             countQueen--;
                             updateQueenCount();
-                            if (aideLignesAttaque){
-                                suppressionLignesAttaque(ligne, colonne);
+                            int tag = (int) imageView.getTag();
+                            tag -= 10;
+                            if ((ligne + colonne) % 2 == 0) {
+                                imageView.setBackgroundColor(backgroundChessSquareLight);
+                            } else {
+                                imageView.setBackgroundColor(backgroundChessSquareDark);
                             }
+                            desafficherDamesAttaquees(ligne, colonne);
+                            imageView.setTag(tag);
                             imageView.setImageDrawable(null);
+                            Log.i("TAG", "Valeur de tag (rm dame): " + (int) imageView.getTag());
                         }
                     }
                 });
@@ -160,24 +173,17 @@ public class MainActivity extends AppCompatActivity {
         imageViewAideLignesAttaque.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (aideLignesAttaque){
-                    for (int i = 0; i < 8; i++){
-                        int ligne = currentPossibility[i];
-                        if (ligne != -1){
-                            suppressionLignesAttaque(ligne, i);
+                aideLignesAttaque = true;
+                for (int i = 0; i < 8; i++){
+                    for (int j = 0; j < 8; j++){
+                        TableRow ligneEchiquier = (TableRow) tl.getChildAt(i);
+                        ImageView caseEchiquier = (ImageView) ligneEchiquier.getChildAt(j);
+                        if ((int) caseEchiquier.getTag() > 10){
+                            caseEchiquier.setBackgroundResource(R.drawable.background_light_with_border);
                         }
                     }
-                    aideLignesAttaque = false;
                 }
-                else {
-                    for (int i = 0; i < 8; i++){
-                        int ligne = currentPossibility[i];
-                        if (ligne != -1){
-                            affichageLignesAttaque(ligne, i, R.color.white, R.color.black);
-                        }
-                    }
-                    aideLignesAttaque = true;
-                }
+                imageViewAideLignesAttaque.setOnClickListener(null);
             }
         });
 
@@ -207,27 +213,24 @@ public class MainActivity extends AppCompatActivity {
         textCountQueen.setText(8 - countQueen + "/8");
     }
 
-    private void affichageLignesAttaque(int ligne, int colonne, int couleurClair, int couleurFonce){
-        TableRow row = (TableRow) tl.getChildAt(ligne);
+    private boolean afficherDamesAttaquees(int ligne, int colonne){
+        ImageView caseEchiquier;
+        boolean attaqueAuMoins1Dame = false;
         for (int i = 0; i < 8; i++){
-            TableRow eachRow = (TableRow) tl.getChildAt(i);
-            ImageView imageView = (ImageView) row.getChildAt(i);
-            int tag = (int) imageView.getTag();
-            imageView.setTag(tag + 1);
-            if ((ligne+i) % 2 == 0){
-                imageView.setBackgroundColor(getColor(couleurClair));
+            if (i != colonne){
+                caseEchiquier = getCaseEchiquier(ligne, i);
+                incrementerTagCaseEchiquier(caseEchiquier);
+                if (aideLignesAttaque && (int) caseEchiquier.getTag() >= 11){
+                    caseEchiquier.setBackgroundResource(R.drawable.background_light_with_border);
+                    attaqueAuMoins1Dame = true;
+                }
             }
-            else {
-                imageView.setBackgroundColor(getColor(couleurFonce));
-            }
-            if (i != ligne) {
-                imageView = (ImageView) eachRow.getChildAt(colonne);
-                tag = (int) imageView.getTag();
-                imageView.setTag(tag + 1);
-                if ((colonne + i) % 2 == 0) {
-                    imageView.setBackgroundColor(getColor(couleurClair));
-                } else {
-                    imageView.setBackgroundColor(getColor(couleurFonce));
+            if (i != ligne){
+                caseEchiquier = getCaseEchiquier(i, colonne);
+                incrementerTagCaseEchiquier(caseEchiquier);
+                if (aideLignesAttaque && (int) caseEchiquier.getTag() >= 11){
+                    caseEchiquier.setBackgroundResource(R.drawable.background_light_with_border);
+                    attaqueAuMoins1Dame = true;
                 }
             }
         }
@@ -236,15 +239,11 @@ public class MainActivity extends AppCompatActivity {
         while (lignetmp != 0 && colonnetmp != 0){
             lignetmp--;
             colonnetmp--;
-            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
-            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
-            int tag = (int) imageView.getTag();
-            imageView.setTag(tag + 1);
-            if ((ligne+colonne) % 2 == 0){
-                imageView.setBackgroundColor(getColor(couleurClair));
-            }
-            else {
-                imageView.setBackgroundColor(getColor(couleurFonce));
+            caseEchiquier = getCaseEchiquier(lignetmp, colonnetmp);
+            incrementerTagCaseEchiquier(caseEchiquier);
+            if (aideLignesAttaque && (int) caseEchiquier.getTag() >= 11){
+                caseEchiquier.setBackgroundResource(R.drawable.background_light_with_border);
+                attaqueAuMoins1Dame = true;
             }
         }
         lignetmp = ligne;
@@ -252,14 +251,11 @@ public class MainActivity extends AppCompatActivity {
         while (lignetmp != 0 && colonnetmp != 7) {
             lignetmp--;
             colonnetmp++;
-            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
-            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
-            int tag = (int) imageView.getTag();
-            imageView.setTag(tag + 1);
-            if ((ligne + colonne) % 2 == 0) {
-                imageView.setBackgroundColor(getColor(couleurClair));
-            } else {
-                imageView.setBackgroundColor(getColor(couleurFonce));
+            caseEchiquier = getCaseEchiquier(lignetmp, colonnetmp);
+            incrementerTagCaseEchiquier(caseEchiquier);
+            if (aideLignesAttaque && (int) caseEchiquier.getTag() >= 11){
+                caseEchiquier.setBackgroundResource(R.drawable.background_light_with_border);
+                attaqueAuMoins1Dame = true;
             }
         }
         lignetmp = ligne;
@@ -267,14 +263,11 @@ public class MainActivity extends AppCompatActivity {
         while (lignetmp != 7 && colonnetmp != 0) {
             lignetmp++;
             colonnetmp--;
-            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
-            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
-            int tag = (int) imageView.getTag();
-            imageView.setTag(tag + 1);
-            if ((ligne + colonne) % 2 == 0) {
-                imageView.setBackgroundColor(getColor(couleurClair));
-            } else {
-                imageView.setBackgroundColor(getColor(couleurFonce));
+            caseEchiquier = getCaseEchiquier(lignetmp, colonnetmp);
+            incrementerTagCaseEchiquier(caseEchiquier);
+            if (aideLignesAttaque && (int) caseEchiquier.getTag() >= 11){
+                caseEchiquier.setBackgroundResource(R.drawable.background_light_with_border);
+                attaqueAuMoins1Dame = true;
             }
         }
         lignetmp = ligne;
@@ -282,43 +275,49 @@ public class MainActivity extends AppCompatActivity {
         while (lignetmp != 7 && colonnetmp != 7) {
             lignetmp++;
             colonnetmp++;
-            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
-            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
-            int tag = (int) imageView.getTag();
-            imageView.setTag(tag + 1);
-            if ((ligne + colonne) % 2 == 0) {
-                imageView.setBackgroundColor(getColor(couleurClair));
-            } else {
-                imageView.setBackgroundColor(getColor(couleurFonce));
+            caseEchiquier = getCaseEchiquier(lignetmp, colonnetmp);
+            incrementerTagCaseEchiquier(caseEchiquier);
+            if (aideLignesAttaque && (int) caseEchiquier.getTag() >= 11){
+                caseEchiquier.setBackgroundResource(R.drawable.background_light_with_border);
+                attaqueAuMoins1Dame = true;
             }
         }
+        return attaqueAuMoins1Dame;
     }
 
-    private void suppressionLignesAttaque(int ligne, int colonne){
+    private void incrementerTagCaseEchiquier(ImageView caseEchiquier){
+        int tag = (int) caseEchiquier.getTag();
+        tag++;
+        caseEchiquier.setTag(tag);
+    }
+
+    private ImageView getCaseEchiquier(int ligne, int colonne){
         TableRow row = (TableRow) tl.getChildAt(ligne);
+        return (ImageView) row.getChildAt(colonne);
+    }
+
+    private void desafficherDamesAttaquees(int ligne, int colonne){
+        ImageView caseEchiquier;
         for (int i = 0; i < 8; i++) {
-            TableRow eachRow = (TableRow) tl.getChildAt(i);
-            ImageView imageView = (ImageView) row.getChildAt(i);
-            int tag = (int) imageView.getTag();
-            tag--;
-            imageView.setTag(tag);
-            if (tag == 0) {
-                if ((ligne + i) % 2 == 0) {
-                    imageView.setBackgroundColor(getColor(R.color.beige));
-                } else {
-                    imageView.setBackgroundColor(getColor(R.color.brown));
+            if (i != colonne) {
+                caseEchiquier = getCaseEchiquier(ligne, i);
+                decrementerTagCaseEchiquier(caseEchiquier);
+                if (aideLignesAttaque && (int) caseEchiquier.getTag() == 10){
+                    if ((ligne + i) % 2 == 0) {
+                        caseEchiquier.setBackgroundColor(backgroundChessSquareLight);
+                    } else {
+                        caseEchiquier.setBackgroundColor(backgroundChessSquareDark);
+                    }
                 }
             }
-            if (i != ligne) {
-                imageView = (ImageView) eachRow.getChildAt(colonne);
-                tag = (int) imageView.getTag();
-                tag--;
-                imageView.setTag(tag);
-                if (tag == 0) {
-                    if ((colonne + i) % 2 == 0) {
-                        imageView.setBackgroundColor(getColor(R.color.beige));
+            if (i != ligne){
+                caseEchiquier = getCaseEchiquier(i, colonne);
+                decrementerTagCaseEchiquier(caseEchiquier);
+                if (aideLignesAttaque && (int) caseEchiquier.getTag() == 10){
+                    if ((i + colonne) % 2 == 0) {
+                        caseEchiquier.setBackgroundColor(backgroundChessSquareLight);
                     } else {
-                        imageView.setBackgroundColor(getColor(R.color.brown));
+                        caseEchiquier.setBackgroundColor(backgroundChessSquareDark);
                     }
                 }
             }
@@ -328,16 +327,13 @@ public class MainActivity extends AppCompatActivity {
         while (lignetmp != 0 && colonnetmp != 0){
             lignetmp--;
             colonnetmp--;
-            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
-            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
-            int tag = (int) imageView.getTag();
-            tag--;
-            imageView.setTag(tag);
-            if (tag == 0) {
+            caseEchiquier = getCaseEchiquier(lignetmp, colonnetmp);
+            decrementerTagCaseEchiquier(caseEchiquier);
+            if (aideLignesAttaque && (int) caseEchiquier.getTag() == 10){
                 if ((ligne + colonne) % 2 == 0) {
-                    imageView.setBackgroundColor(getColor(R.color.beige));
+                    caseEchiquier.setBackgroundColor(backgroundChessSquareLight);
                 } else {
-                    imageView.setBackgroundColor(getColor(R.color.brown));
+                    caseEchiquier.setBackgroundColor(backgroundChessSquareDark);
                 }
             }
         }
@@ -346,16 +342,13 @@ public class MainActivity extends AppCompatActivity {
         while (lignetmp != 0 && colonnetmp != 7) {
             lignetmp--;
             colonnetmp++;
-            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
-            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
-            int tag = (int) imageView.getTag();
-            tag--;
-            imageView.setTag(tag);
-            if (tag == 0) {
+            caseEchiquier = getCaseEchiquier(lignetmp, colonnetmp);
+            decrementerTagCaseEchiquier(caseEchiquier);
+            if (aideLignesAttaque && (int) caseEchiquier.getTag() == 10){
                 if ((ligne + colonne) % 2 == 0) {
-                    imageView.setBackgroundColor(getColor(R.color.beige));
+                    caseEchiquier.setBackgroundColor(backgroundChessSquareLight);
                 } else {
-                    imageView.setBackgroundColor(getColor(R.color.brown));
+                    caseEchiquier.setBackgroundColor(backgroundChessSquareDark);
                 }
             }
         }
@@ -364,16 +357,13 @@ public class MainActivity extends AppCompatActivity {
         while (lignetmp != 7 && colonnetmp != 0) {
             lignetmp++;
             colonnetmp--;
-            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
-            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
-            int tag = (int) imageView.getTag();
-            tag--;
-            imageView.setTag(tag);
-            if (tag == 0) {
+            caseEchiquier = getCaseEchiquier(lignetmp, colonnetmp);
+            decrementerTagCaseEchiquier(caseEchiquier);
+            if (aideLignesAttaque && (int) caseEchiquier.getTag() == 10){
                 if ((ligne + colonne) % 2 == 0) {
-                    imageView.setBackgroundColor(getColor(R.color.beige));
+                    caseEchiquier.setBackgroundColor(backgroundChessSquareLight);
                 } else {
-                    imageView.setBackgroundColor(getColor(R.color.brown));
+                    caseEchiquier.setBackgroundColor(backgroundChessSquareDark);
                 }
             }
         }
@@ -382,37 +372,51 @@ public class MainActivity extends AppCompatActivity {
         while (lignetmp != 7 && colonnetmp != 7) {
             lignetmp++;
             colonnetmp++;
-            TableRow rowtmp = (TableRow) tl.getChildAt(lignetmp);
-            ImageView imageView = (ImageView) rowtmp.getChildAt(colonnetmp);
-            int tag = (int) imageView.getTag();
-            tag--;
-            imageView.setTag(tag);
-            if (tag == 0) {
+            caseEchiquier = getCaseEchiquier(lignetmp, colonnetmp);
+            decrementerTagCaseEchiquier(caseEchiquier);
+            if (aideLignesAttaque && (int) caseEchiquier.getTag() == 10){
                 if ((ligne + colonne) % 2 == 0) {
-                    imageView.setBackgroundColor(getColor(R.color.beige));
+                    caseEchiquier.setBackgroundColor(backgroundChessSquareLight);
                 } else {
-                    imageView.setBackgroundColor(getColor(R.color.brown));
+                    caseEchiquier.setBackgroundColor(backgroundChessSquareDark);
                 }
             }
         }
     }
 
+    private void decrementerTagCaseEchiquier(ImageView caseEchiquier){
+        int tag = (int) caseEchiquier.getTag();
+        tag--;
+        caseEchiquier.setTag(tag);
+    }
+
+    // à changer ! parcourir la grille et si un tag > 10 alors PERDU
     public void validerGrille(){
         if (countQueen == 8){
-            if (isArrayInListArray(victoryPossibilities, currentPossibility)){
-                Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
+            Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
+            int[] currentPossibilityArray = {-1,-1,-1,-1,-1,-1,-1,-1};
+            for (Integer position : currentPossibility) {
+                int colonne = (position/10) - 1;
+                int ligne = position - ((colonne+1)*10) - 1;
+                if (currentPossibilityArray[colonne] == -1){
+                    currentPossibilityArray[colonne] = ligne;
+                }
+                else {
+                    intent.putExtra("isVictory", false);
+                    startActivity(intent);
+                }
+            }
+            if (isArrayInListArray(victoryPossibilities, currentPossibilityArray)){
                 intent.putExtra("isVictory", true);
                 startActivity(intent);
             }
             else {
-                Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
                 intent.putExtra("isVictory", false);
                 startActivity(intent);
             }
         }
         else {
             messageTextView.setText("Veuillez placer toutes les dames.");
-
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
