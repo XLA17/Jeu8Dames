@@ -34,6 +34,17 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/victoryPercentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/chessboard"
+        app:layout_constraintBottom_toTopOf="@id/chessboard"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="30sp"
+        android:visibility="gone"/>
+
     <TableLayout
         android:id="@+id/chessboard"
         android:layout_width="wrap_content"
@@ -49,11 +60,12 @@
         android:id="@+id/invalidPlayMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="Veuillez placer toutes les dames."
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chessboard"
-        android:layout_marginTop="5dp"/>
+        android:layout_marginTop="5dp"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/confirmButton"
@@ -81,13 +93,13 @@
             android:scaleType="fitCenter"/>
 
         <ImageView
-            android:id="@+id/aidePourcentageVictoire"
+            android:id="@+id/victoryPercentageHelp"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/victory_percent_help_button" />
 
         <ImageView
-            android:id="@+id/aidePoseReine"
+            android:id="@+id/queenPlacementHelp"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/queen_placement_help_button" />

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -19,7 +20,10 @@ public class MainActivity extends AppCompatActivity {
     private int lightSquareColor;
     private int darkSquareColor;
     private TableLayout chessboard;
+    private List<int[]> victoryPossibilityList;
+    private List<Integer> currentQueensPositions;
     private int countQueen;
+    private TextView victoryPercentageView;
     private TextView invalidPlayMessage;
     private TextView textCountQueen;
     private ImageView showAttackQueensHelpView;
@@ -37,13 +41,16 @@ public class MainActivity extends AppCompatActivity {
         // Initialization of variables
         lightSquareColor = getResources().getColor((R.color.beige), getTheme());
         darkSquareColor = getResources().getColor((R.color.brown), getTheme());
-        List<int[]> victoryPossibilityList = new ArrayList<>();
+        victoryPossibilityList = new ArrayList<>();
+        currentQueensPositions = new ArrayList<>();
         chessboard = findViewById(R.id.chessboard);
+        victoryPercentageView = findViewById(R.id.victoryPercentage);
         ImageView confirmButton = findViewById(R.id.confirmButton);
         countQueen = 0;
         invalidPlayMessage = findViewById(R.id.invalidPlayMessage);
         textCountQueen = findViewById(R.id.textCountQueen);
         showAttackQueensHelpView = findViewById(R.id.showAttackQueensHelp);
+        ImageView victoryPercentageHelpView = findViewById(R.id.victoryPercentageHelp);
         showAttackQueensHelp = false;
 
         int[] s1 = {1,3,5,7,2,0,6,4};
@@ -124,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 chessboardSquare.setTag(0);
                 int column = j;
                 int row = i;
+                int squarePosition = (column+1) * 10 + row+1;
                 chessboardSquare.setOnClickListener(v -> {
                     if (chessboardSquare.getDrawable() == null) {
                         if (countQueen < 8) {
@@ -132,17 +140,21 @@ public class MainActivity extends AppCompatActivity {
                             chessboardSquare.setTag(tag);
                             countQueen++;
                             updateQueenCount();
+                            Log.i("TAG", "onCreate: " + squarePosition);
+                            currentQueensPositions.add(squarePosition);
                             if (BrowseAttackedSquares(row, column, true)){
                                 if ((int) chessboardSquare.getTag() >= 11) {
                                     chessboardSquare.setBackgroundResource(R.drawable.background_light_with_border);
                                 }
                             }
+                            victoryPercentageView.setText(calculateVictoryPercentage() + "%");
                             chessboardSquare.setImageResource(R.drawable.queen);
                         }
                     }
                     else {
                         countQueen--;
                         updateQueenCount();
+                        currentQueensPositions.remove((Object) squarePosition);
                         int tag = (int) chessboardSquare.getTag();
                         tag -= 10;
                         if ((row + column) % 2 == 0) {
@@ -152,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         BrowseAttackedSquares(row, column, false);
                         chessboardSquare.setTag(tag);
+                        victoryPercentageView.setText(calculateVictoryPercentage() + "%");
                         chessboardSquare.setImageDrawable(null);
                     }
                 });
@@ -173,6 +186,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             showAttackQueensHelpView.setOnClickListener(null);
+        });
+
+        victoryPercentageHelpView.setOnClickListener(v -> {
+            victoryPercentageView.setVisibility(View.VISIBLE);
+            victoryPercentageHelpView.setOnClickListener(null);
         });
 
         confirmButton.setOnClickListener(v -> confirmPlay());
@@ -248,8 +266,30 @@ public class MainActivity extends AppCompatActivity {
         return (ImageView) row.getChildAt(colonne);
     }
 
-    // à changer ! parcourir la grille et si un tag > 10 alors PERDU
-    public void confirmPlay(){
+    private int calculateVictoryPercentage(){
+        int countPossibility = 0;
+        if (victoryPossibilityList.size() == 0){
+            return 100;
+        }
+        for (int[] victoryPossibility : victoryPossibilityList) {
+            boolean isPossible = true;
+            for (Integer queenPosition : currentQueensPositions) {
+                int column = queenPosition / 10 - 1;
+                int row = queenPosition - (column * 10) - 11;
+                Log.i("TAG", "calculateVictoryPercentage: " + column + ";" + row);
+                Log.i("TAG", "VP calculateVictoryPercentage: " + victoryPossibility[column]);
+                if (victoryPossibility[column] != row){
+                    isPossible = false;
+                }
+            }
+            if (isPossible){
+                countPossibility++;
+            }
+        }
+        return Math.round((float) countPossibility / 92 * 100);
+    }
+
+    private void confirmPlay(){
         if (countQueen == 8){
             Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
             boolean isVictory = true;
@@ -267,10 +307,13 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
         else {
-            invalidPlayMessage.setText("Veuillez placer toutes les dames.");
+            /*invalidPlayMessage.setText("Veuillez placer toutes les dames.");
 
             // Supprimer le texte au bout de 2 secondes.
-            new Handler().postDelayed(() -> invalidPlayMessage.setText(""), 2000);
+            new Handler().postDelayed(() -> invalidPlayMessage.setText(""), 2000);*/
+
+            invalidPlayMessage.setVisibility(View.VISIBLE);
+            new Handler().postDelayed(() -> invalidPlayMessage.setVisibility(View.INVISIBLE), 2000);
         }
     }
 }
