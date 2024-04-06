@@ -11,8 +11,8 @@
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@id/tableLayout"
-        app:layout_constraintBottom_toTopOf="@id/tableLayout"
+        app:layout_constraintEnd_toEndOf="@id/chessboard"
+        app:layout_constraintBottom_toTopOf="@id/chessboard"
         android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
@@ -35,7 +35,7 @@
     </LinearLayout>
 
     <TableLayout
-        android:id="@+id/tableLayout"
+        android:id="@+id/chessboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,20 +46,20 @@
         android:padding="3dp"/>
 
     <TextView
-        android:id="@+id/messageTextView"
+        android:id="@+id/invalidPlayMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tableLayout"
+        app:layout_constraintTop_toBottomOf="@id/chessboard"
         android:layout_marginTop="5dp"/>
 
     <ImageView
-        android:id="@+id/validerButton"
+        android:id="@+id/confirmButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/valider_button"
+        android:src="@drawable/confirm_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="20dp"/>
@@ -74,23 +74,23 @@
         android:layout_margin="20dp">
 
         <ImageView
-            android:id="@+id/aideLignesAttaque"
+            android:id="@+id/showAttackQueensHelp"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/aide_lignes_attaque"
+            android:src="@drawable/show_attack_queens_help_button"
             android:scaleType="fitCenter"/>
 
         <ImageView
             android:id="@+id/aidePourcentageVictoire"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/aide_pourcentage_victoire" />
+            android:src="@drawable/victory_percent_help_button" />
 
         <ImageView
             android:id="@+id/aidePoseReine"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/aide_pose_reine" />
+            android:src="@drawable/queen_placement_help_button" />
 
     </LinearLayout>
 
