@@ -68,6 +68,15 @@
         android:visibility="invisible"/>
 
     <ImageView
+        android:id="@+id/cleanButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/clean_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="20dp"/>
+
+    <ImageView
         android:id="@+id/confirmButton"
         android:layout_width="60dp"
         android:layout_height="60dp"

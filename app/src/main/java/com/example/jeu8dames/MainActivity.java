@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textCountQueen;
     private ImageView showAttackQueensHelpView;
     private boolean showAttackQueensHelp;
+    private int numberOfQueensHelp;
 
     /**
      * Initializes the activity.
@@ -45,13 +46,16 @@ public class MainActivity extends AppCompatActivity {
         currentQueensPositions = new ArrayList<>();
         chessboard = findViewById(R.id.chessboard);
         victoryPercentageView = findViewById(R.id.victoryPercentage);
+        ImageView cleanButton = findViewById(R.id.cleanButton);
         ImageView confirmButton = findViewById(R.id.confirmButton);
         countQueen = 0;
         invalidPlayMessage = findViewById(R.id.invalidPlayMessage);
         textCountQueen = findViewById(R.id.textCountQueen);
         showAttackQueensHelpView = findViewById(R.id.showAttackQueensHelp);
         ImageView victoryPercentageHelpView = findViewById(R.id.victoryPercentageHelp);
+        ImageView queensPlacementHelpView = findViewById(R.id.queenPlacementHelp);
         showAttackQueensHelp = false;
+        numberOfQueensHelp = 3;
 
         int[] s1 = {1,3,5,7,2,0,6,4};
         int[] s2 = {0,6,3,5,7,1,4,2};
@@ -135,37 +139,11 @@ public class MainActivity extends AppCompatActivity {
                 chessboardSquare.setOnClickListener(v -> {
                     if (chessboardSquare.getDrawable() == null) {
                         if (countQueen < 8) {
-                            int tag = (int) chessboardSquare.getTag();
-                            tag += 10;
-                            chessboardSquare.setTag(tag);
-                            countQueen++;
-                            updateQueenCount();
-                            Log.i("TAG", "onCreate: " + squarePosition);
-                            currentQueensPositions.add(squarePosition);
-                            if (BrowseAttackedSquares(row, column, true)){
-                                if ((int) chessboardSquare.getTag() >= 11) {
-                                    chessboardSquare.setBackgroundResource(R.drawable.background_light_with_border);
-                                }
-                            }
-                            victoryPercentageView.setText(calculateVictoryPercentage() + "%");
-                            chessboardSquare.setImageResource(R.drawable.queen);
+                            placeQueen(chessboardSquare, row, column);
                         }
                     }
                     else {
-                        countQueen--;
-                        updateQueenCount();
-                        currentQueensPositions.remove((Object) squarePosition);
-                        int tag = (int) chessboardSquare.getTag();
-                        tag -= 10;
-                        if ((row + column) % 2 == 0) {
-                            chessboardSquare.setBackgroundColor(lightSquareColor);
-                        } else {
-                            chessboardSquare.setBackgroundColor(darkSquareColor);
-                        }
-                        BrowseAttackedSquares(row, column, false);
-                        chessboardSquare.setTag(tag);
-                        victoryPercentageView.setText(calculateVictoryPercentage() + "%");
-                        chessboardSquare.setImageDrawable(null);
+                        removeQueen(chessboardSquare, row, column);
                     }
                 });
                 chessboardRow.addView(chessboardSquare);
@@ -173,6 +151,10 @@ public class MainActivity extends AppCompatActivity {
 
             chessboard.addView(chessboardRow);
         }
+
+        cleanButton.setOnClickListener(v -> {
+            cleanChessboard();
+        });
 
         showAttackQueensHelpView.setOnClickListener(v -> {
             showAttackQueensHelp = true;
@@ -193,12 +175,71 @@ public class MainActivity extends AppCompatActivity {
             victoryPercentageHelpView.setOnClickListener(null);
         });
 
+        queensPlacementHelpView.setOnClickListener(v -> {
+            placeRandomQueens(numberOfQueensHelp);
+        });
+
         confirmButton.setOnClickListener(v -> confirmPlay());
+    }
+
+    private void placeQueen(ImageView chessboardSquare, int row, int column){
+        int squarePosition = (column+1) * 10 + row+1;
+        int tag = (int) chessboardSquare.getTag();
+        tag += 10;
+        chessboardSquare.setTag(tag);
+        countQueen++;
+        updateQueenCount();
+        currentQueensPositions.add(squarePosition);
+        if (BrowseAttackedSquares(row, column, true)){
+            if ((int) chessboardSquare.getTag() >= 11) {
+                chessboardSquare.setBackgroundResource(R.drawable.background_light_with_border);
+            }
+        }
+        victoryPercentageView.setText(calculateVictoryPercentage() + "%");
+        chessboardSquare.setImageResource(R.drawable.queen);
+    }
+
+    private void removeQueen(ImageView chessboardSquare, int row, int column){
+        int squarePosition = (column+1) * 10 + row+1;
+        countQueen--;
+        updateQueenCount();
+        currentQueensPositions.remove((Object) squarePosition);
+        int tag = (int) chessboardSquare.getTag();
+        tag -= 10;
+        if ((row + column) % 2 == 0) {
+            chessboardSquare.setBackgroundColor(lightSquareColor);
+        } else {
+            chessboardSquare.setBackgroundColor(darkSquareColor);
+        }
+        BrowseAttackedSquares(row, column, false);
+        chessboardSquare.setTag(tag);
+        victoryPercentageView.setText(calculateVictoryPercentage() + "%");
+        chessboardSquare.setImageDrawable(null);
     }
 
     // Méthode pour mettre à jour le nombre de reines placées
     private void updateQueenCount() {
         textCountQueen.setText(8 - countQueen + "/8");
+    }
+
+    private void cleanChessboard(){
+        for (int i = 0; i < 8; i++){
+            TableRow chessboardRow = (TableRow) chessboard.getChildAt(i);
+            for (int j = 0; j < 8; j++){
+                ImageView chessboardSquare = (ImageView) chessboardRow.getChildAt(j);
+                chessboardSquare.setTag(0);
+                chessboardSquare.setImageDrawable(null);
+                if ((i + j) % 2 == 0) {
+                    chessboardSquare.setBackgroundColor(lightSquareColor);
+                } else {
+                    chessboardSquare.setBackgroundColor(darkSquareColor);
+                }
+            }
+        }
+        countQueen = 0;
+        updateQueenCount();
+        victoryPercentageView.setText("100%");
+        currentQueensPositions = new ArrayList<>();
     }
 
     private boolean BrowseAttackedSquares(int row, int column, boolean isAttacking){
@@ -261,9 +302,9 @@ public class MainActivity extends AppCompatActivity {
         caseEchiquier.setTag(tag);
     }
 
-    private ImageView getChessboardSquare(int ligne, int colonne){
-        TableRow row = (TableRow) chessboard.getChildAt(ligne);
-        return (ImageView) row.getChildAt(colonne);
+    private ImageView getChessboardSquare(int row, int column){
+        TableRow chessboardRow = (TableRow) chessboard.getChildAt(row);
+        return (ImageView) chessboardRow.getChildAt(column);
     }
 
     private int calculateVictoryPercentage(){
@@ -276,8 +317,6 @@ public class MainActivity extends AppCompatActivity {
             for (Integer queenPosition : currentQueensPositions) {
                 int column = queenPosition / 10 - 1;
                 int row = queenPosition - (column * 10) - 11;
-                Log.i("TAG", "calculateVictoryPercentage: " + column + ";" + row);
-                Log.i("TAG", "VP calculateVictoryPercentage: " + victoryPossibility[column]);
                 if (victoryPossibility[column] != row){
                     isPossible = false;
                 }
@@ -289,6 +328,25 @@ public class MainActivity extends AppCompatActivity {
         return Math.round((float) countPossibility / 92 * 100);
     }
 
+    private void placeRandomQueens(int number){
+        int randomPossibilityIndex = (int) (Math.random() * 92);
+        int[] randomPossibility = victoryPossibilityList.get(randomPossibilityIndex);
+        cleanChessboard();
+        ArrayList<Integer> indexQueens = new ArrayList<>();
+        while (indexQueens.size() < number) {
+            int valeur = (int) (Math.random() *8);
+            if (!indexQueens.contains(valeur)) {
+                indexQueens.add(valeur);
+            }
+        }
+        for (int i = 0; i < number; i++){
+            int row = randomPossibility[indexQueens.get(i)];
+            int column = indexQueens.get(i);
+            ImageView chessboardSquare = getChessboardSquare(row, column);
+            placeQueen(chessboardSquare, row, column);
+        }
+    }
+
     private void confirmPlay(){
         if (countQueen == 8){
             Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
@@ -298,7 +356,6 @@ public class MainActivity extends AppCompatActivity {
                 for (int j = 0; j < 8; j++){
                     ImageView chessboardSquare = (ImageView) chessboardRow.getChildAt(j);
                     if ((int) chessboardSquare.getTag() > 10){
-                        Log.i("TAG", "confirmPlay: " + (int) chessboardSquare.getTag());
                         isVictory = false;
                     }
                 }
@@ -307,11 +364,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
         else {
-            /*invalidPlayMessage.setText("Veuillez placer toutes les dames.");
-
-            // Supprimer le texte au bout de 2 secondes.
-            new Handler().postDelayed(() -> invalidPlayMessage.setText(""), 2000);*/
-
             invalidPlayMessage.setVisibility(View.VISIBLE);
             new Handler().postDelayed(() -> invalidPlayMessage.setVisibility(View.INVISIBLE), 2000);
         }
