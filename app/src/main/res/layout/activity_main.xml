@@ -92,14 +92,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="bottom"
         android:layout_margin="20dp">
 
         <ImageView
             android:id="@+id/showAttackQueensHelp"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/show_attack_queens_help_button"
-            android:scaleType="fitCenter"/>
+            android:src="@drawable/show_attack_queens_help" />
 
         <ImageView
             android:id="@+id/victoryPercentageHelp"
@@ -111,7 +111,7 @@
             android:id="@+id/queenPlacementHelp"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/queen_placement_help_button" />
+            android:src="@drawable/queen_placement_help" />
 
     </LinearLayout>
 

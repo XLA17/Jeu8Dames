@@ -1,10 +1,14 @@
 package com.example.jeu8dames;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView showAttackQueensHelpView;
     private boolean showAttackQueensHelp;
     private int numberOfQueensHelp;
+    private ImageView victoryPercentageHelpView;
 
     /**
      * Initializes the activity.
@@ -52,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         invalidPlayMessage = findViewById(R.id.invalidPlayMessage);
         textCountQueen = findViewById(R.id.textCountQueen);
         showAttackQueensHelpView = findViewById(R.id.showAttackQueensHelp);
-        ImageView victoryPercentageHelpView = findViewById(R.id.victoryPercentageHelp);
+        victoryPercentageHelpView = findViewById(R.id.victoryPercentageHelp);
         ImageView queensPlacementHelpView = findViewById(R.id.queenPlacementHelp);
         showAttackQueensHelp = false;
         numberOfQueensHelp = 3;
@@ -135,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
                 chessboardSquare.setTag(0);
                 int column = j;
                 int row = i;
-                int squarePosition = (column+1) * 10 + row+1;
                 chessboardSquare.setOnClickListener(v -> {
                     if (chessboardSquare.getDrawable() == null) {
                         if (countQueen < 8) {
@@ -152,9 +156,8 @@ public class MainActivity extends AppCompatActivity {
             chessboard.addView(chessboardRow);
         }
 
-        cleanButton.setOnClickListener(v -> {
-            cleanChessboard();
-        });
+        cleanButton.setOnClickListener(v -> cleanChessboard());
+        fonction(cleanButton, R.drawable.clean_button, R.drawable.clean_button_pressed);
 
         showAttackQueensHelpView.setOnClickListener(v -> {
             showAttackQueensHelp = true;
@@ -167,19 +170,70 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+            showAttackQueensHelpView.setColorFilter(Color.argb(63, 0, 0, 0));
             showAttackQueensHelpView.setOnClickListener(null);
+            showAttackQueensHelpView.setOnTouchListener(null);
         });
+        fonction(showAttackQueensHelpView, R.drawable.show_attack_queens_help, R.drawable.show_attack_queens_help_pressed);
 
         victoryPercentageHelpView.setOnClickListener(v -> {
             victoryPercentageView.setVisibility(View.VISIBLE);
+            victoryPercentageHelpView.setColorFilter(Color.argb(63, 0, 0, 0));
             victoryPercentageHelpView.setOnClickListener(null);
+            victoryPercentageHelpView.setOnTouchListener(null);
         });
+        fonction(victoryPercentageHelpView, R.drawable.victory_percent_help_button, R.drawable.victory_percent_help_button_pressed);
 
-        queensPlacementHelpView.setOnClickListener(v -> {
-            placeRandomQueens(numberOfQueensHelp);
-        });
+        queensPlacementHelpView.setOnClickListener(v -> placeRandomQueens(numberOfQueensHelp));
+        fonction(queensPlacementHelpView, R.drawable.queen_placement_help, R.drawable.queen_placement_help_pressed);
 
         confirmButton.setOnClickListener(v -> confirmPlay());
+        fonction(confirmButton, R.drawable.confirm_button, R.drawable.confirm_button_pressed);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void fonction(ImageView imageView, int resID, int resID_pressed){
+        Animation pressed_button = AnimationUtils.loadAnimation(this, R.anim.pressed_button);
+        Animation released_button = AnimationUtils.loadAnimation(this, R.anim.released_button);
+        pressed_button.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // Ne rien faire ici
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //queensPlacementHelpView.setScaleX(0.95f);
+                imageView.setScaleY(0.95f);
+                imageView.setImageResource(resID_pressed);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // Ne rien faire ici
+            }
+        });
+
+        imageView.setOnTouchListener((v, event) -> {
+            Animation animation;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    // Lorsque le bouton est pressé
+                    imageView.startAnimation(pressed_button);
+                    imageView.setPivotX(imageView.getWidth() / 2);
+                    imageView.setPivotY(imageView.getHeight());
+                    return true;
+                case MotionEvent.ACTION_UP:
+                    // Lorsque le bouton est relâché
+                    imageView.startAnimation(released_button);
+                    imageView.setScaleX(1);
+                    imageView.setScaleY(1);
+                    imageView.setImageResource(resID);
+                    imageView.performClick();
+                    return true;
+            }
+            return false;
+        });
     }
 
     private void placeQueen(ImageView chessboardSquare, int row, int column){
