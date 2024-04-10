@@ -8,13 +8,12 @@
     android:background="@color/white">
 
     <!-- TextView pour le titre du jeu -->
-    <TextView
-        android:id="@+id/gameTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Jeu 8 Dames"
-        android:textSize="36sp"
-        android:textColor="@color/title_color"
+    <ImageView
+        android:id="@+id/gameLogi"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/homepage"
+        android:scaleType="centerCrop"
         android:layout_marginBottom="32dp" />
 
     <!-- Button pour commencer à jouer -->
