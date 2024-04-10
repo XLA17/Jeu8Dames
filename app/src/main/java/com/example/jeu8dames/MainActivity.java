@@ -1,14 +1,18 @@
 package com.example.jeu8dames;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -23,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     private int lightSquareColor;
     private int darkSquareColor;
+    private int lightSquareColorWithBorder;
+    private int darkSquareColorWithBorder;
     private TableLayout chessboard;
     private List<int[]> victoryPossibilityList;
     private List<Integer> currentQueensPositions;
@@ -47,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         // Initialization of variables
         lightSquareColor = getResources().getColor((R.color.beige), getTheme());
         darkSquareColor = getResources().getColor((R.color.brown), getTheme());
+        lightSquareColorWithBorder = R.drawable.background_light_with_border;
+        darkSquareColorWithBorder = R.drawable.background_dark_with_border;
         victoryPossibilityList = new ArrayList<>();
         currentQueensPositions = new ArrayList<>();
         chessboard = findViewById(R.id.chessboard);
@@ -156,43 +164,89 @@ public class MainActivity extends AppCompatActivity {
             chessboard.addView(chessboardRow);
         }
 
-        cleanButton.setOnClickListener(v -> cleanChessboard());
-        fonction(cleanButton, R.drawable.clean_button, R.drawable.clean_button_pressed);
+        cleanButton.setOnClickListener(v -> {
+            cleanChessboard();
+
+        });
+        buttonPressAnimation(cleanButton, R.drawable.clean_button, R.drawable.clean_button_pressed);
 
         showAttackQueensHelpView.setOnClickListener(v -> {
-            showAttackQueensHelp = true;
-            for (int i = 0; i < 8; i++){
-                TableRow chessboardRow = (TableRow) chessboard.getChildAt(i);
-                for (int j = 0; j < 8; j++){
-                    ImageView chessboardSquare = (ImageView) chessboardRow.getChildAt(j);
-                    if ((int) chessboardSquare.getTag() > 10){
-                        chessboardSquare.setBackgroundResource(R.drawable.background_light_with_border);
+            showConfirmationDialogBox("Souhaitez vraiment activer cette aide ?", "Cette action est rédhibitoire.", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    showAttackQueensHelp = true;
+                    for (int i = 0; i < 8; i++){
+                        TableRow chessboardRow = (TableRow) chessboard.getChildAt(i);
+                        for (int j = 0; j < 8; j++){
+                            ImageView chessboardSquare = (ImageView) chessboardRow.getChildAt(j);
+                            if ((int) chessboardSquare.getTag() > 10){
+                                if ((i + j) % 2 == 0) {
+                                    chessboardSquare.setBackgroundResource(lightSquareColorWithBorder);
+                                }
+                                else {
+                                    chessboardSquare.setBackgroundResource(darkSquareColorWithBorder);
+                                }
+                            }
+                        }
                     }
+                    showAttackQueensHelpView.setColorFilter(Color.argb(63, 0, 0, 0));
+                    showAttackQueensHelpView.setOnClickListener(null);
+                    showAttackQueensHelpView.setOnTouchListener(null);
                 }
-            }
-            showAttackQueensHelpView.setColorFilter(Color.argb(63, 0, 0, 0));
-            showAttackQueensHelpView.setOnClickListener(null);
-            showAttackQueensHelpView.setOnTouchListener(null);
+            });
         });
-        fonction(showAttackQueensHelpView, R.drawable.show_attack_queens_help, R.drawable.show_attack_queens_help_pressed);
+        buttonPressAnimation(showAttackQueensHelpView, R.drawable.show_attack_queens_help, R.drawable.show_attack_queens_help_pressed);
 
         victoryPercentageHelpView.setOnClickListener(v -> {
-            victoryPercentageView.setVisibility(View.VISIBLE);
-            victoryPercentageHelpView.setColorFilter(Color.argb(63, 0, 0, 0));
-            victoryPercentageHelpView.setOnClickListener(null);
-            victoryPercentageHelpView.setOnTouchListener(null);
+            showConfirmationDialogBox("Souhaitez vraiment activer cette aide ?", "Cette action est rédhibitoire.", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    victoryPercentageView.setVisibility(View.VISIBLE);
+                    victoryPercentageHelpView.setColorFilter(Color.argb(63, 0, 0, 0));
+                    victoryPercentageHelpView.setOnClickListener(null);
+                    victoryPercentageHelpView.setOnTouchListener(null);
+                }
+            });
         });
-        fonction(victoryPercentageHelpView, R.drawable.victory_percent_help_button, R.drawable.victory_percent_help_button_pressed);
+        buttonPressAnimation(victoryPercentageHelpView, R.drawable.victory_percent_help_button, R.drawable.victory_percent_help_button_pressed);
 
-        queensPlacementHelpView.setOnClickListener(v -> placeRandomQueens(numberOfQueensHelp));
-        fonction(queensPlacementHelpView, R.drawable.queen_placement_help, R.drawable.queen_placement_help_pressed);
+        queensPlacementHelpView.setOnClickListener(v -> {
+            showConfirmationDialogBox("Souhaitez vraiment activer cette aide ?", "Les dames seront réinitialisées.", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    placeRandomQueens(numberOfQueensHelp);
+                }
+            });
+        });
+        buttonPressAnimation(queensPlacementHelpView, R.drawable.queen_placement_help, R.drawable.queen_placement_help_pressed);
 
         confirmButton.setOnClickListener(v -> confirmPlay());
-        fonction(confirmButton, R.drawable.confirm_button, R.drawable.confirm_button_pressed);
+        buttonPressAnimation(confirmButton, R.drawable.confirm_button, R.drawable.confirm_button_pressed);
+    }
+
+    public void showConfirmationDialogBox(String title, String message, DialogInterface.OnClickListener positiveAction) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Confirmer", positiveAction)
+                .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                positiveButton.setTextColor(getResources().getColor(android.R.color.black));
+                negativeButton.setTextColor(getResources().getColor(android.R.color.black));
+            }
+        });
+        dialog.show();
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void fonction(ImageView imageView, int resID, int resID_pressed){
+    private void buttonPressAnimation(ImageView imageView, int resID, int resID_pressed){
         Animation pressed_button = AnimationUtils.loadAnimation(this, R.anim.pressed_button);
         Animation released_button = AnimationUtils.loadAnimation(this, R.anim.released_button);
         pressed_button.setAnimationListener(new Animation.AnimationListener() {
@@ -246,7 +300,12 @@ public class MainActivity extends AppCompatActivity {
         currentQueensPositions.add(squarePosition);
         if (BrowseAttackedSquares(row, column, true)){
             if ((int) chessboardSquare.getTag() >= 11) {
-                chessboardSquare.setBackgroundResource(R.drawable.background_light_with_border);
+                if ((row + column) % 2 == 0) {
+                    chessboardSquare.setBackgroundResource(lightSquareColorWithBorder);
+                }
+                else {
+                    chessboardSquare.setBackgroundResource(darkSquareColorWithBorder);
+                }
             }
         }
         victoryPercentageView.setText(calculateVictoryPercentage() + "%");
@@ -333,7 +392,12 @@ public class MainActivity extends AppCompatActivity {
         updateSquareTag(chessboardSquare, increment);
         if (increment){
             if (showAttackQueensHelp && (int) chessboardSquare.getTag() >= 11){
-                chessboardSquare.setBackgroundResource(R.drawable.background_light_with_border);
+                if ((row + column) % 2 == 0) {
+                    chessboardSquare.setBackgroundResource(lightSquareColorWithBorder);
+                }
+                else {
+                    chessboardSquare.setBackgroundResource(darkSquareColorWithBorder);
+                }
                 return true;
             }
         }
