@@ -1,33 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fond_principal"
-    android:id="@+id/relativeLayout"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/cosmeticMenu"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/palette"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="20dp"
-        android:onClick="openCosmeticMenu"/>
+    <ImageView
+        android:id="@+id/soundButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/sound_on"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="20dp"/>
 
-
-
-    <TableLayout
-        android:id="@+id/tableLayout"
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="@color/black"
-        android:padding="3dp">
-    </TableLayout>
+        app:layout_constraintEnd_toEndOf="@id/chessboard"
+        app:layout_constraintBottom_toTopOf="@id/chessboard"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
 
-</RelativeLayout>
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/queen"
+            android:layout_gravity="center_vertical"/>
+
+        <TextView
+            android:id="@+id/textCountQueen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="8/8"
+            android:textSize="30sp"
+            android:layout_gravity="center_vertical"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/victoryPercentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/chessboard"
+        app:layout_constraintBottom_toTopOf="@id/chessboard"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="30sp"
+        android:visibility="gone"/>
+
+    <TableLayout
+        android:id="@+id/chessboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/black"
+        android:padding="3dp"/>
+
+    <TextView
+        android:id="@+id/invalidPlayMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Veuillez placer toutes les dames."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chessboard"
+        android:layout_marginTop="5dp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/cleanButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/clean_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="20dp"/>
+
+    <ImageView
+        android:id="@+id/confirmButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/confirm_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="20dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="bottom"
+        android:layout_margin="20dp">
+
+        <ImageView
+            android:id="@+id/showAttackQueensHelp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/show_attack_queens_help" />
+
+        <ImageView
+            android:id="@+id/victoryPercentageHelp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/victory_percent_help_button" />
+
+        <ImageView
+            android:id="@+id/queenPlacementHelp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/queen_placement_help" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
