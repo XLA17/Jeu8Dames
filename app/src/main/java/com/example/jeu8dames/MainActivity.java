@@ -1,18 +1,15 @@
 package com.example.jeu8dames;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -164,14 +161,24 @@ public class MainActivity extends AppCompatActivity {
             chessboard.addView(chessboardRow);
         }
 
+        ButtonListener cleanButtonListener = new ButtonListener(this);
         cleanButton.setOnClickListener(v -> {
-            cleanChessboard();
-
+            String title = "Souhaitez vraiment retirer toutes les dames ?";
+            String message = "Cette action est rédhibitoire.";
+            DialogInterface.OnClickListener positiveAction = new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    cleanChessboard();
+                }
+            };
+            cleanButtonListener.showConfirmationDialogBoxRemovable(title, message, positiveAction);
         });
-        buttonPressAnimation(cleanButton, R.drawable.clean_button, R.drawable.clean_button_pressed);
+        cleanButtonListener.buttonPressAnimation(cleanButton, R.drawable.clean_button, R.drawable.clean_button_pressed);
 
+        ButtonListener attackQueensHelpListener = new ButtonListener(this);
         showAttackQueensHelpView.setOnClickListener(v -> {
-            showConfirmationDialogBox("Souhaitez vraiment activer cette aide ?", "Cette action est rédhibitoire.", new DialogInterface.OnClickListener() {
+            String title = "Souhaitez vraiment activer cette aide ?";
+            String message = "Cette action est rédhibitoire.";
+            DialogInterface.OnClickListener positiveAction = new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     showAttackQueensHelp = true;
                     for (int i = 0; i < 8; i++){
@@ -192,102 +199,53 @@ public class MainActivity extends AppCompatActivity {
                     showAttackQueensHelpView.setOnClickListener(null);
                     showAttackQueensHelpView.setOnTouchListener(null);
                 }
-            });
+            };
+            attackQueensHelpListener.showConfirmationDialogBox(title, message, positiveAction);
         });
-        buttonPressAnimation(showAttackQueensHelpView, R.drawable.show_attack_queens_help, R.drawable.show_attack_queens_help_pressed);
+        attackQueensHelpListener.buttonPressAnimation(showAttackQueensHelpView, R.drawable.show_attack_queens_help, R.drawable.show_attack_queens_help_pressed);
 
+        ButtonListener victoryPercentageHelpListener = new ButtonListener(this);
         victoryPercentageHelpView.setOnClickListener(v -> {
-            showConfirmationDialogBox("Souhaitez vraiment activer cette aide ?", "Cette action est rédhibitoire.", new DialogInterface.OnClickListener() {
+            String title = "Souhaitez vraiment activer cette aide ?";
+            String message = "Cette action est rédhibitoire.";
+            DialogInterface.OnClickListener positiveAction = new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     victoryPercentageView.setVisibility(View.VISIBLE);
                     victoryPercentageHelpView.setColorFilter(Color.argb(63, 0, 0, 0));
                     victoryPercentageHelpView.setOnClickListener(null);
                     victoryPercentageHelpView.setOnTouchListener(null);
                 }
-            });
+            };
+            victoryPercentageHelpListener.showConfirmationDialogBox(title, message, positiveAction);
         });
-        buttonPressAnimation(victoryPercentageHelpView, R.drawable.victory_percent_help_button, R.drawable.victory_percent_help_button_pressed);
+        victoryPercentageHelpListener.buttonPressAnimation(victoryPercentageHelpView, R.drawable.victory_percent_help_button, R.drawable.victory_percent_help_button_pressed);
 
+        ButtonListener queensPlacementHelpListener = new ButtonListener(this);
         queensPlacementHelpView.setOnClickListener(v -> {
-            showConfirmationDialogBox("Souhaitez vraiment activer cette aide ?", "Les dames seront réinitialisées.", new DialogInterface.OnClickListener() {
+            String title = "Souhaitez vraiment activer cette aide ?";
+            String message = "Les dames seront réinitialisées.";
+            DialogInterface.OnClickListener positiveAction = new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     placeRandomQueens(numberOfQueensHelp);
                 }
-            });
+            };
+            queensPlacementHelpListener.showConfirmationDialogBox(title, message, positiveAction);
         });
-        buttonPressAnimation(queensPlacementHelpView, R.drawable.queen_placement_help, R.drawable.queen_placement_help_pressed);
+        queensPlacementHelpListener.buttonPressAnimation(queensPlacementHelpView, R.drawable.queen_placement_help, R.drawable.queen_placement_help_pressed);
 
-        confirmButton.setOnClickListener(v -> confirmPlay());
-        buttonPressAnimation(confirmButton, R.drawable.confirm_button, R.drawable.confirm_button_pressed);
-    }
-
-    public void showConfirmationDialogBox(String title, String message, DialogInterface.OnClickListener positiveAction) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomAlertDialog);
-        builder.setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("Confirmer", positiveAction)
-                .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-                Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-                positiveButton.setTextColor(getResources().getColor(android.R.color.black));
-                negativeButton.setTextColor(getResources().getColor(android.R.color.black));
-            }
+        ButtonListener confirmButtonListener = new ButtonListener(this);
+        confirmButton.setOnClickListener(v -> {
+            String title = "Souhaitez vraiment confirmer ce jeu ?";
+            String message = "";
+            DialogInterface.OnClickListener positiveAction = new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    confirmPlay();
+                }
+            };
+            confirmButtonListener.showConfirmationDialogBoxRemovable(title, message, positiveAction);
+            confirmPlay();
         });
-        dialog.show();
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void buttonPressAnimation(ImageView imageView, int resID, int resID_pressed){
-        Animation pressed_button = AnimationUtils.loadAnimation(this, R.anim.pressed_button);
-        Animation released_button = AnimationUtils.loadAnimation(this, R.anim.released_button);
-        pressed_button.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                // Ne rien faire ici
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                //queensPlacementHelpView.setScaleX(0.95f);
-                imageView.setScaleY(0.95f);
-                imageView.setImageResource(resID_pressed);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-                // Ne rien faire ici
-            }
-        });
-
-        imageView.setOnTouchListener((v, event) -> {
-            Animation animation;
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    // Lorsque le bouton est pressé
-                    imageView.startAnimation(pressed_button);
-                    imageView.setPivotX(imageView.getWidth() / 2);
-                    imageView.setPivotY(imageView.getHeight());
-                    return true;
-                case MotionEvent.ACTION_UP:
-                    // Lorsque le bouton est relâché
-                    imageView.startAnimation(released_button);
-                    imageView.setScaleX(1);
-                    imageView.setScaleY(1);
-                    imageView.setImageResource(resID);
-                    imageView.performClick();
-                    return true;
-            }
-            return false;
-        });
+        confirmButtonListener.buttonPressAnimation(confirmButton, R.drawable.confirm_button, R.drawable.confirm_button_pressed);
     }
 
     private void placeQueen(ImageView chessboardSquare, int row, int column){
@@ -353,6 +311,27 @@ public class MainActivity extends AppCompatActivity {
         updateQueenCount();
         victoryPercentageView.setText("100%");
         currentQueensPositions = new ArrayList<>();
+    }
+
+    private void showAttackQueensHelp(){
+        showAttackQueensHelp = true;
+        for (int i = 0; i < 8; i++){
+            TableRow chessboardRow = (TableRow) chessboard.getChildAt(i);
+            for (int j = 0; j < 8; j++){
+                ImageView chessboardSquare = (ImageView) chessboardRow.getChildAt(j);
+                if ((int) chessboardSquare.getTag() > 10){
+                    if ((i + j) % 2 == 0) {
+                        chessboardSquare.setBackgroundResource(lightSquareColorWithBorder);
+                    }
+                    else {
+                        chessboardSquare.setBackgroundResource(darkSquareColorWithBorder);
+                    }
+                }
+            }
+        }
+        showAttackQueensHelpView.setColorFilter(Color.argb(63, 0, 0, 0));
+        showAttackQueensHelpView.setOnClickListener(null);
+        showAttackQueensHelpView.setOnTouchListener(null);
     }
 
     private boolean BrowseAttackedSquares(int row, int column, boolean isAttacking){

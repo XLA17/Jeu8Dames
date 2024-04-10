@@ -3,7 +3,4 @@
     <style name="CustomAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:windowBackground">@drawable/custom_dialog_box_background</item>
     </style>
-    <style name="CustomAlertDialogButtons" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@android:color/black</item>
-    </style>
 </resources>
