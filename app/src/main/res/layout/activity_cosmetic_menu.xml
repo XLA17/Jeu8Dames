@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/backToGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Retour"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="15dp"
+        android:onClick="backToGame"/>
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:padding="3dp">
+
+        <Button
+            android:id="@+id/changeBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Changer le fond"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:onClick="changeBackground"/>
+
+        <Button
+            android:id="@+id/changeBoard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Changer le plateau"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:onClick="changeBoard"/>
+
+        <Button
+            android:id="@+id/changePieces"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Changer les pièces"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:onClick="changePieces"/>
+    </TableLayout>
+
+</RelativeLayout>

@@ -26,7 +26,23 @@
             android:exported="true">
         </activity>
         <activity
+            android:name=".BackgroundChangerActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".WinLooseActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".CosmeticMenu"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".BoardChangerActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".PieceChangerActivity"
             android:exported="true">
         </activity>
     </application>
