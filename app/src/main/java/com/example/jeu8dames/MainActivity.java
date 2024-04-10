@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -39,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean showAttackQueensHelp;
     private int numberOfQueensHelp;
     private ImageView victoryPercentageHelpView;
+    private MediaPlayer mediaPlayer;
+    private ImageView soundButton;
+    private boolean isMusicPlaying;
 
     /**
      * Initializes the activity.
@@ -68,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
         ImageView queensPlacementHelpView = findViewById(R.id.queenPlacementHelp);
         showAttackQueensHelp = false;
         numberOfQueensHelp = 3;
+        soundButton = findViewById(R.id.soundButton);
+        isMusicPlaying = true;
 
         int[] s1 = {1,3,5,7,2,0,6,4};
         int[] s2 = {0,6,3,5,7,1,4,2};
@@ -253,6 +259,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         confirmButtonListener.buttonPressAnimation(confirmButton, R.drawable.confirm_button, R.drawable.confirm_button_pressed);
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.lofi);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
+
+        ButtonListener soundButtonListener = new ButtonListener(this);
+        soundButton.setOnClickListener(v -> {
+            Log.i("TAG", "onCreate: " + isMusicPlaying);
+            toggleSound();
+            if (!isMusicPlaying){
+                Log.i("TAG", "animation");
+                soundButtonListener.buttonPressAnimation(soundButton, R.drawable.sound_on, R.drawable.sound_on_pressed);
+            }
+            else {
+                soundButtonListener.buttonPressAnimation(soundButton, R.drawable.sound_off, R.drawable.sound_off_pressed);
+            }
+        });
+        soundButtonListener.buttonPressAnimation(soundButton, R.drawable.sound_off, R.drawable.sound_off_pressed);
+    }
+
+    public void toggleSound() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            isMusicPlaying = false;
+        } else {
+            mediaPlayer.start();
+            isMusicPlaying = true;
+        }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mediaPlayer.pause();
     }
 
     private void placeQueen(ImageView chessboardSquare, int row, int column){

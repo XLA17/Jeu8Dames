@@ -1,10 +1,8 @@
 package com.example.jeu8dames;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ImageView;
 
@@ -19,8 +17,8 @@ public class WinLooseActivity extends AppCompatActivity {
         setContentView(R.layout.win_loose_layout);
 
         TextView textView = findViewById(R.id.message);
-        ImageView retryButton = findViewById(R.id.RetryButton);
-
+        ImageView restartButton = findViewById(R.id.restartButton);
+        ImageView quitButton = findViewById(R.id.quitButton);
         Intent intent = getIntent();
 
         if (intent != null) {
@@ -34,19 +32,25 @@ public class WinLooseActivity extends AppCompatActivity {
             }
         }
 
-        retryButton.setOnClickListener(new View.OnClickListener() {
+        restartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                recommencer();
+                restart();
+            }
+        });
+        quitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                quit();
             }
         });
     }
 
-    public void recommencer(){
+    public void restart(){
         startActivity(new Intent(this, MenuActivity.class));
     }
-    public void quitter(View view) {
-        finishAffinity(); // Ferme toutes les activités de l'application
+    public void quit() {
+        finishAffinity();
     }
 
 

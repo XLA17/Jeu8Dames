@@ -7,21 +7,18 @@
     android:padding="16dp"
     android:background="@color/white">
 
-    <!-- TextView pour le titre du jeu -->
     <ImageView
-        android:id="@+id/gameLogi"
+        android:id="@+id/gameLogo"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:src="@drawable/homepage"
+        android:src="@drawable/logo"
         android:scaleType="centerCrop"
         android:layout_marginBottom="32dp" />
 
-    <!-- Button pour commencer à jouer -->
     <ImageView
-        android:id="@+id/playButton"
+        android:id="@+id/startButton"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/jouer"
-        android:onClick="start"/>
+        android:src="@drawable/start_game_button"/>
 
 </LinearLayout>
