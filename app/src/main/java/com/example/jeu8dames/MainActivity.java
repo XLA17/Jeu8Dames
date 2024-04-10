@@ -229,21 +229,26 @@ public class MainActivity extends AppCompatActivity {
                     placeRandomQueens(numberOfQueensHelp);
                 }
             };
-            queensPlacementHelpListener.showConfirmationDialogBox(title, message, positiveAction);
+            queensPlacementHelpListener.showConfirmationDialogBoxRemovable(title, message, positiveAction);
         });
         queensPlacementHelpListener.buttonPressAnimation(queensPlacementHelpView, R.drawable.queen_placement_help, R.drawable.queen_placement_help_pressed);
 
         ButtonListener confirmButtonListener = new ButtonListener(this);
         confirmButton.setOnClickListener(v -> {
-            String title = "Souhaitez vraiment confirmer ce jeu ?";
-            String message = "";
-            DialogInterface.OnClickListener positiveAction = new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    confirmPlay();
-                }
-            };
-            confirmButtonListener.showConfirmationDialogBoxRemovable(title, message, positiveAction);
-            confirmPlay();
+            if (countQueen == 8) {
+                String title = "Souhaitez vraiment confirmer ce jeu ?";
+                String message = "";
+                DialogInterface.OnClickListener positiveAction = new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        confirmPlay();
+                    }
+                };
+                confirmButtonListener.showConfirmationDialogBox(title, message, positiveAction);
+            }
+            else {
+                invalidPlayMessage.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(() -> invalidPlayMessage.setVisibility(View.INVISIBLE), 2000);
+            }
         });
         confirmButtonListener.buttonPressAnimation(confirmButton, R.drawable.confirm_button, R.drawable.confirm_button_pressed);
     }
@@ -311,27 +316,6 @@ public class MainActivity extends AppCompatActivity {
         updateQueenCount();
         victoryPercentageView.setText("100%");
         currentQueensPositions = new ArrayList<>();
-    }
-
-    private void showAttackQueensHelp(){
-        showAttackQueensHelp = true;
-        for (int i = 0; i < 8; i++){
-            TableRow chessboardRow = (TableRow) chessboard.getChildAt(i);
-            for (int j = 0; j < 8; j++){
-                ImageView chessboardSquare = (ImageView) chessboardRow.getChildAt(j);
-                if ((int) chessboardSquare.getTag() > 10){
-                    if ((i + j) % 2 == 0) {
-                        chessboardSquare.setBackgroundResource(lightSquareColorWithBorder);
-                    }
-                    else {
-                        chessboardSquare.setBackgroundResource(darkSquareColorWithBorder);
-                    }
-                }
-            }
-        }
-        showAttackQueensHelpView.setColorFilter(Color.argb(63, 0, 0, 0));
-        showAttackQueensHelpView.setOnClickListener(null);
-        showAttackQueensHelpView.setOnTouchListener(null);
     }
 
     private boolean BrowseAttackedSquares(int row, int column, boolean isAttacking){
@@ -445,7 +429,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void confirmPlay(){
-        if (countQueen == 8){
             Intent intent = new Intent(MainActivity.this, WinLooseActivity.class);
             boolean isVictory = true;
             for (int i = 0; i < 8; i++){
@@ -459,10 +442,5 @@ public class MainActivity extends AppCompatActivity {
             }
             intent.putExtra("isVictory", isVictory);
             startActivity(intent);
-        }
-        else {
-            invalidPlayMessage.setVisibility(View.VISIBLE);
-            new Handler().postDelayed(() -> invalidPlayMessage.setVisibility(View.INVISIBLE), 2000);
-        }
     }
 }

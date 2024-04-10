@@ -63,6 +63,9 @@ public class ButtonListener {
                     .setPositiveButton("Confirmer", positiveAction)
                     .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
+                            if (checkBox.isChecked()){
+                                isRemoved = true;
+                            }
                             dialog.cancel();
                         }
                     });
