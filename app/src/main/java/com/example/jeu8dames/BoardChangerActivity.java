@@ -1,71 +1,73 @@
 package com.example.jeu8dames;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridLayout;
+import android.widget.TableRow;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
+/**
+ * L'activité BoardChangerActivity permet à l'utilisateur de changer les couleurs du plateau de jeu.
+ */
 public class BoardChangerActivity extends AppCompatActivity {
-
-    private int selectedFirstColor = 0;
-    private int selectedSecondColor = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_board_changer);
+        setContentView(R.layout.activity_change_board);
 
-        GridLayout boardGrid = findViewById(R.id.boardGrid);
+        // Récupère les lignes du plateau de jeu
+        TableRow row1 = findViewById(R.id.row1);
+        TableRow row2 = findViewById(R.id.row2);
+        TableRow row3 = findViewById(R.id.row3);
+        TableRow row4 = findViewById(R.id.row4);
 
-        // Définissez les couleurs pour chaque case
-        int[][] colors = {
-                {R.color.beige, R.color.brown},
-                {R.color.black, R.color.white},
-                {R.color.yellow, R.color.black},
-                {R.color.blue, R.color.white}
-        };
-
-        // Créez les cases du plateau
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                View cell = new View(this);
-                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                params.width = 0;
-                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                params.rowSpec = GridLayout.spec(i);
-                params.columnSpec = GridLayout.spec(j);
-                cell.setLayoutParams(params);
-
-                // Définissez les couleurs pour chaque case
-                int color1 = ContextCompat.getColor(this, colors[i][0]);
-                int color2 = ContextCompat.getColor(this, colors[i][1]);
-                cell.setBackgroundColor((j % 2 == 0) ? color1 : color2);
-
-                // Ajoutez un OnClickListener pour chaque case
-                final int finalI = i;
-                cell.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        selectedFirstColor = colors[finalI][0];
-                        selectedSecondColor = colors[finalI][1];
-                        saveSelectedColors();
-                    }
-                });
-
-                boardGrid.addView(cell);
-            }
-        }
+        // Ajoute un écouteur de clic à chaque ligne pour changer les couleurs du plateau
+        row1.setOnClickListener(v -> changeBoardColor(row1));
+        row2.setOnClickListener(v -> changeBoardColor(row2));
+        row3.setOnClickListener(v -> changeBoardColor(row3));
+        row4.setOnClickListener(v -> changeBoardColor(row4));
     }
 
-    private void saveSelectedColors() {
-        Intent intent = new Intent();
-        intent.putExtra("selectedFirstColor", selectedFirstColor);
-        intent.putExtra("selectedSecondColor", selectedSecondColor);
-        setResult(RESULT_OK, intent);
+    /**
+     * Termine cette activité et retourne au jeu.
+     *
+     * @param view La vue qui a déclenché l'événement.
+     */
+    public void backToGame(View view) {
+        finish();
+    }
+
+    /**
+     * Change les couleurs du plateau de jeu en fonction de la ligne sélectionnée.
+     *
+     * @param row La ligne du plateau de jeu à modifier.
+     */
+    public void changeBoardColor(TableRow row) {
+        // Récupère le tag de la ligne pour identifier l'option sélectionnée
+        String tag = (String) row.getTag();
+        switch (tag) {
+            case "row1":
+                Material.setLightColor(R.color.beige);
+                Material.setDarkColor(R.color.brown);
+                break;
+            case "row2":
+                Material.setLightColor(R.color.white);
+                Material.setDarkColor(R.color.black);
+                break;
+            case "row3":
+                Material.setLightColor(R.color.beige);
+                Material.setDarkColor(R.color.black);
+                break;
+            case "row4":
+                Material.setLightColor(R.color.white);
+                Material.setDarkColor(R.color.blue);
+                break;
+            default:
+                break;
+        }
+
+        // Termine cette activité après avoir changé les couleurs du plateau
         finish();
     }
 }

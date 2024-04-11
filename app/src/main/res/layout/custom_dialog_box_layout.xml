@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <!-- CheckBox pour permettre à l'utilisateur de ne plus afficher la boîte de dialogue -->
     <CheckBox
         android:id="@+id/checkbox_ne_plus_afficher"
         android:layout_width="wrap_content"

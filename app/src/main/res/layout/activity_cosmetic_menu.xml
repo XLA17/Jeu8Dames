@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <!-- Bouton pour revenir au jeu -->
     <Button
         android:id="@+id/backToGame"
         android:layout_width="wrap_content"
@@ -15,6 +16,7 @@
         android:layout_marginStart="15dp"
         android:onClick="backToGame"/>
 
+    <!-- TableLayout contenant des boutons pour changer le fond, le plateau et les pièces -->
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="wrap_content"
@@ -23,6 +25,7 @@
         android:layout_centerVertical="true"
         android:padding="3dp">
 
+        <!-- Bouton pour changer le fond -->
         <Button
             android:id="@+id/changeBackground"
             android:layout_width="wrap_content"
@@ -34,6 +37,7 @@
             android:layout_marginStart="15dp"
             android:onClick="changeBackground"/>
 
+        <!-- Bouton pour changer le plateau -->
         <Button
             android:id="@+id/changeBoard"
             android:layout_width="wrap_content"
@@ -45,6 +49,7 @@
             android:layout_marginStart="15dp"
             android:onClick="changeBoard"/>
 
+        <!-- Bouton pour changer les pièces -->
         <Button
             android:id="@+id/changePieces"
             android:layout_width="wrap_content"

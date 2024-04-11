@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,15 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Bouton des paramètres -->
+    <ImageView
+        android:id="@+id/settings"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="20dp"/>
+
+    <!-- Bouton pour activer/désactiver le son -->
     <ImageView
         android:id="@+id/soundButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/sound_on"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/settings"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="20dp"/>
 
+    <!-- Zone d'affichage du nombre de dames placées -->
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
@@ -26,6 +37,7 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/queenImage"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:src="@drawable/queen"
@@ -38,11 +50,13 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:text="8/8"
+            android:textColor="@color/black"
             android:textSize="30sp"
             android:layout_gravity="center_vertical"/>
 
     </LinearLayout>
 
+    <!-- Affichage du pourcentage de victoire -->
     <TextView
         android:id="@+id/victoryPercentage"
         android:layout_width="wrap_content"
@@ -54,6 +68,7 @@
         android:textSize="30sp"
         android:visibility="gone"/>
 
+    <!-- Échiquier -->
     <TableLayout
         android:id="@+id/chessboard"
         android:layout_width="wrap_content"
@@ -65,17 +80,20 @@
         android:background="@color/black"
         android:padding="3dp"/>
 
+    <!-- Message d'erreur en cas de coup invalide -->
     <TextView
         android:id="@+id/invalidPlayMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Veuillez placer toutes les dames."
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chessboard"
         android:layout_marginTop="5dp"
         android:visibility="invisible"/>
 
+    <!-- Bouton pour effacer les pièces placées -->
     <ImageView
         android:id="@+id/cleanButton"
         android:layout_width="60dp"
@@ -85,6 +103,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="20dp"/>
 
+    <!-- Bouton pour confirmer le placement des pièces -->
     <ImageView
         android:id="@+id/confirmButton"
         android:layout_width="60dp"
@@ -94,6 +113,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="20dp"/>
 
+    <!-- Barre d'outils d'aide -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -104,18 +124,21 @@
         android:gravity="bottom"
         android:layout_margin="20dp">
 
+        <!-- Bouton pour afficher les positions attaquantes -->
         <ImageView
             android:id="@+id/showAttackQueensHelp"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/show_attack_queens_help" />
 
+        <!-- Bouton pour afficher le pourcentage de victoire -->
         <ImageView
             android:id="@+id/victoryPercentageHelp"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/victory_percent_help_button" />
 
+        <!-- Bouton pour afficher l'aide sur le placement des dames -->
         <ImageView
             android:id="@+id/queenPlacementHelp"
             android:layout_width="60dp"
