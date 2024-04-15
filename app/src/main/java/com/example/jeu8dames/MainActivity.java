@@ -23,7 +23,7 @@ import android.media.MediaPlayer;
 /**
  * Classe MainActivity pour le jeu des 8 dames.
  */
-public class MainActivity extends AppCompatActivity implements Material.MaterialChangeListener {
+public class MainActivity extends AppCompatActivity implements CosmeticListener {
 
     // Variables pour les couleurs et les éléments de l'interface utilisateur
     private int lightColor;
@@ -298,6 +298,77 @@ public class MainActivity extends AppCompatActivity implements Material.Material
     }
 
     /**
+     * Met en pause la lecture de la musique lorsque l'activité est mise en pause.
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mediaPlayer.pause();
+    }
+
+    /**
+     * Redémarre la lecture de la musique si elle n'est pas en mode muet et n'est pas déjà en cours de lecture lorsque l'activité démarre.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!isMute && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        }
+        soundButton.setBackgroundResource(R.drawable.sound_on);
+    }
+
+    /**
+     * Reprend la lecture de la musique si elle n'est pas en mode muet, si un lecteur multimédia existe et si elle n'est pas déjà en cours de lecture lorsque l'activité reprend.
+     * Appelle des méthodes pour mettre à jour l'apparence.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isMute && mediaPlayer != null && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        }
+        onBackgroundChanged();
+        onColorChanged();
+        onQueenImageChanged();
+    }
+
+    /**
+     * Arrête la lecture de la musique et libère les ressources associées lorsque l'activité est arrêtée.
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        mediaPlayer = null;
+    }
+
+    /**
+     * Créé un nouveau lecteur multimédia avec la musique spécifiée lorsque l'activité redémarre.
+     */
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        mediaPlayer = MediaPlayer.create(this, R.raw.lofi);
+        mediaPlayer.setLooping(true);
+    }
+
+    /**
+     * Supprime toutes les vues du layout de l'échiquier et arrête la lecture de la musique, libère les ressources associées si un lecteur multimédia existe, lorsque l'activité est détruite.
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        chessboard.removeAllViews();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
+    /**
      * Appelée lorsque l'arrière-plan est modifié.
      * Définit l'arrière-plan de la vue de fond en fonction du thème Material.
      */
@@ -315,20 +386,22 @@ public class MainActivity extends AppCompatActivity implements Material.Material
     public void onColorChanged() {
         lightColor = getColor(Material.getLightColor());
         darkColor = getColor(Material.getDarkColor());
+        lightSquareColorWithBorder = Material.getBackgroundLightWithColor();
+        darkSquareColorWithBorder = Material.getBackgroundDarkWithColor();
         for (int i = 0; i < 8; i++) {
             TableRow chessboardRow = (TableRow) chessboard.getChildAt(i);
             for (int j = 0; j < 8; j++) {
                 ImageView chessboardSquare = (ImageView) chessboardRow.getChildAt(j);
                 int tag = (int) chessboardSquare.getTag();
                 if ((i + j) % 2 == 0) {
-                    if (tag >= 11){
+                    if (tag >= 11 && showAttackQueensHelp){
                         chessboardSquare.setBackgroundResource(lightSquareColorWithBorder);
                     }
                     else {
                         chessboardSquare.setBackgroundColor(lightColor);
                     }
                 } else {
-                    if (tag >= 11){
+                    if (tag >= 11 && showAttackQueensHelp){
                         chessboardSquare.setBackgroundResource(darkSquareColorWithBorder);
                     }
                     else {
@@ -361,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements Material.Material
     /**
      * Ouvre le menu cosmétique de l'application.
      */
-    public void openCosmeticMenu() {
+    private void openCosmeticMenu() {
         Intent intent = new Intent(this, CosmeticMenu.class);
         startActivity(intent);
     }
@@ -369,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements Material.Material
     /**
      * Active ou désactive le son du jeu.
      */
-    public void toggleSound() {
+    private void toggleSound() {
         if (!isMute) {
             mediaPlayer.pause();
             isMute = true;
@@ -395,7 +468,7 @@ public class MainActivity extends AppCompatActivity implements Material.Material
         countQueen++;
         updateQueenCount();
         currentQueensPositions.add(squarePosition);
-        if (BrowseAttackedSquares(row, column, true)) {
+        if (browseAttackedSquares(row, column, true)) {
             if ((int) chessboardSquare.getTag() >= 11) {
                 if ((row + column) % 2 == 0) {
                     chessboardSquare.setBackgroundResource(lightSquareColorWithBorder);
@@ -428,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements Material.Material
         } else {
             chessboardSquare.setBackgroundColor(darkColor);
         }
-        BrowseAttackedSquares(row, column, false);
+        browseAttackedSquares(row, column, false);
         chessboardSquare.setTag(tag);
         victoryPercentageView.setText(calculateVictoryPercentage() + "%");
         chessboardSquare.setImageDrawable(null);
@@ -474,7 +547,7 @@ public class MainActivity extends AppCompatActivity implements Material.Material
      * @param isAttacking Vrai si une reine est placée, faux si une reine est retirée.
      * @return Vrai si des reines sont attaquées ; sinon, faux.
      */
-    private boolean BrowseAttackedSquares(int row, int column, boolean isAttacking) {
+    private boolean browseAttackedSquares(int row, int column, boolean isAttacking) {
         boolean areQueensAttacked = false;
         int[][] directions = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}}; // Directions pour les diagonales
 
@@ -636,77 +709,4 @@ public class MainActivity extends AppCompatActivity implements Material.Material
         finish();
         startActivity(intent);
     }
-
-
-    /**
-     * Met en pause la lecture de la musique lorsque l'activité est mise en pause.
-     */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mediaPlayer.pause();
-    }
-
-    /**
-     * Redémarre la lecture de la musique si elle n'est pas en mode muet et n'est pas déjà en cours de lecture lorsque l'activité démarre.
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (!isMute && !mediaPlayer.isPlaying()) {
-            mediaPlayer.start();
-        }
-    }
-
-    /**
-     * Reprend la lecture de la musique si elle n'est pas en mode muet, si un lecteur multimédia existe et si elle n'est pas déjà en cours de lecture lorsque l'activité reprend.
-     * Appelle des méthodes pour mettre à jour l'apparence.
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!isMute && mediaPlayer != null && !mediaPlayer.isPlaying()) {
-            mediaPlayer.start();
-        }
-        onBackgroundChanged();
-        onColorChanged();
-        onQueenImageChanged();
-    }
-
-    /**
-     * Arrête la lecture de la musique et libère les ressources associées lorsque l'activité est arrêtée.
-     */
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mediaPlayer.stop();
-        mediaPlayer.release();
-        mediaPlayer = null;
-    }
-
-    /**
-     * Redémarre la lecture de la musique en créant un nouveau lecteur multimédia avec la musique spécifiée et démarre la lecture en boucle lorsque l'activité redémarre.
-     */
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        mediaPlayer = MediaPlayer.create(this, R.raw.lofi);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
-    }
-
-    /**
-     * Supprime toutes les vues du layout de l'échiquier et arrête la lecture de la musique, libère les ressources associées si un lecteur multimédia existe, lorsque l'activité est détruite.
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        chessboard.removeAllViews();
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-    }
-
 }

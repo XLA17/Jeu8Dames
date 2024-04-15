@@ -4,32 +4,14 @@ package com.example.jeu8dames;
  * La classe Material contient les configurations visuelles de l'application.
  */
 public class Material {
-    /**
-     * L'interface MaterialChangeListener permet d'écouter les changements de configuration visuelle.
-     */
-    public interface MaterialChangeListener {
-        /**
-         * Appelée lorsqu'une nouvelle image de dame est définie.
-         */
-        void onQueenImageChanged();
-
-        /**
-         * Appelée lorsqu'une nouvelle couleur est définie.
-         */
-        void onColorChanged();
-
-        /**
-         * Appelée lorsqu'un nouvel arrière-plan est défini.
-         */
-        void onBackgroundChanged();
-    }
-
     // Variables statiques pour stocker les valeurs des ressources visuelles
     private static int queenImage = R.drawable.queen;
     private static int lightColor = R.color.beige;
     private static int darkColor = R.color.brown;
     private static int background = R.drawable.main_background;
-    private static MaterialChangeListener listener;
+    private static int backgroundLightWithColor = R.drawable.background_beige_with_border;
+    private static int backgroundDarkWithColor = R.drawable.background_brown_with_border;
+    private static CosmeticListener listener;
 
     /**
      * Renvoie l'ID de l'image de la dame actuellement définie.
@@ -65,6 +47,24 @@ public class Material {
      */
     public static int getBackground() {
         return background;
+    }
+
+    /**
+     * Renvoie l'ID de l'arrière-plan sombre actuellement défini.
+     *
+     * @return  L'ID de l'arrière-plan sombre avec border.
+     */
+    public static int getBackgroundLightWithColor(){
+        return backgroundLightWithColor;
+    }
+
+    /**
+     * Renvoie l'ID de l'arrière-plan clair actuellement défini.
+     *
+     * @return  L'ID de l'arrière-plan clair avec border.
+     */
+    public static int getBackgroundDarkWithColor(){
+        return backgroundDarkWithColor;
     }
 
     /**
@@ -120,11 +120,37 @@ public class Material {
     }
 
     /**
+     * Définit l'ID de l'arrière-plan avec couleur claire.
+     *
+     * @param backgroundLightWithColor L'ID du nouvel arrière-plan avec couleur claire.
+     */
+    public static void setBackgroundLightWithColor(int backgroundLightWithColor) {
+        Material.backgroundLightWithColor = backgroundLightWithColor;
+        // Si un observateur est défini, déclenche l'événement de changement d'arrière-plan
+        if (listener != null) {
+            listener.onBackgroundChanged();
+        }
+    }
+
+    /**
+     * Définit l'ID de l'arrière-plan avec couleur sombre.
+     *
+     * @param backgroundDarkWithColor L'ID du nouvel arrière-plan avec couleur sombre.
+     */
+    public static void setBackgroundDarkWithColor(int backgroundDarkWithColor) {
+        Material.backgroundDarkWithColor = backgroundDarkWithColor;
+        // Si un observateur est défini, déclenche l'événement de changement d'arrière-plan
+        if (listener != null) {
+            listener.onBackgroundChanged();
+        }
+    }
+
+    /**
      * Définit l'observateur pour les changements de matériel.
      *
      * @param materialChangeListener L'observateur à définir.
      */
-    public static void setMaterialChangeListener(MaterialChangeListener materialChangeListener) {
+    public static void setMaterialChangeListener(CosmeticListener materialChangeListener) {
         listener = materialChangeListener;
     }
 }

@@ -25,7 +25,7 @@ public class MenuActivity extends AppCompatActivity {
     /*
      * Méthode permettant de lancer l'activité principale.
      */
-    public void start() {
+    private void start() {
         Intent intent = new Intent(this, MainActivity.class);
         finish();
         startActivity(intent);

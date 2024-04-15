@@ -43,25 +43,33 @@ public class BoardChangerActivity extends AppCompatActivity {
      *
      * @param row La ligne du plateau de jeu à modifier.
      */
-    public void changeBoardColor(TableRow row) {
+    private void changeBoardColor(TableRow row) {
         // Récupère le tag de la ligne pour identifier l'option sélectionnée
         String tag = (String) row.getTag();
         switch (tag) {
             case "row1":
                 Material.setLightColor(R.color.beige);
                 Material.setDarkColor(R.color.brown);
+                Material.setBackgroundLightWithColor(R.drawable.background_beige_with_border);
+                Material.setBackgroundDarkWithColor(R.drawable.background_brown_with_border);
                 break;
             case "row2":
                 Material.setLightColor(R.color.white);
                 Material.setDarkColor(R.color.black);
+                Material.setBackgroundLightWithColor(R.drawable.background_white_with_border);
+                Material.setBackgroundDarkWithColor(R.drawable.background_black_with_border);
                 break;
             case "row3":
                 Material.setLightColor(R.color.beige);
                 Material.setDarkColor(R.color.black);
+                Material.setBackgroundLightWithColor(R.drawable.background_beige_with_border);
+                Material.setBackgroundDarkWithColor(R.drawable.background_black_with_border);
                 break;
             case "row4":
                 Material.setLightColor(R.color.white);
                 Material.setDarkColor(R.color.blue);
+                Material.setBackgroundLightWithColor(R.drawable.background_white_with_border);
+                Material.setBackgroundDarkWithColor(R.drawable.background_blue_with_border);
                 break;
             default:
                 break;

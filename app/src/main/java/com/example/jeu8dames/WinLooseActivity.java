@@ -50,7 +50,7 @@ public class WinLooseActivity extends AppCompatActivity {
     /**
      * Redémarre le jeu en démarrant une nouvelle activité de menu.
      */
-    public void restart() {
+    private void restart() {
         finish();
         startActivity(new Intent(this, MenuActivity.class));
     }
@@ -58,7 +58,7 @@ public class WinLooseActivity extends AppCompatActivity {
     /**
      * Quitte l'application en fermant toutes les activités de l'application.
      */
-    public void quit() {
+    private void quit() {
         finishAffinity();
     }
 }
